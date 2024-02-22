@@ -314,6 +314,7 @@ namespace TG_sender_emulator
             {
                 rbtn_MessageTypeText.Select();
                 txt_MessageText.Select();
+                ch_SaveMessage.Checked = true;
             }
         }
 
@@ -332,7 +333,7 @@ namespace TG_sender_emulator
             rtxt_ResponseBody.Text = (await res.Content.ReadAsStringAsync());
             res.Dispose();
             lbl_ReqSts.Text = "ENDED";
-            if (stsCode == HttpStatusCode.OK)
+            if (stsCode == HttpStatusCode.OK && ch_SaveMessage.Checked)
             {
                 TG_Interaction newInteraction = TG_Interaction.DeSerialize(txt_MessageText.Text, _requestMode);
                 _tgInteractions.Add(newInteraction);
@@ -365,24 +366,28 @@ namespace TG_sender_emulator
 
         private void lbox_MessageText_MouseDoubleClick(object sender, MouseEventArgs e)
         {
+            ch_SaveMessage.Checked = false;
             txt_MessageText.Text = lbox_MessageText.Text;
             rbtn_MessageTypeText.Select();
         }
 
         private void lbox_MessageUrl_MouseDoubleClick(object sender, MouseEventArgs e)
         {
+            ch_SaveMessage.Checked = false;
             txt_MessageText.Text = lbox_MessageUrl.Text;
             rbtn_MessageTypeURL.Select();
         }
 
         private void lbox_MessageCmd_MouseDoubleClick(object sender, MouseEventArgs e)
         {
+            ch_SaveMessage.Checked = false;
             txt_MessageText.Text = lbox_MessageCmd.Text;
             rbtn_MessageTypeCMD.Select();
         }
 
         private void lbox_MessageQuery_MouseDoubleClick(object sender, MouseEventArgs e)
         {
+            ch_SaveMessage.Checked = false;
             txt_MessageText.Text = lbox_MessageQuery.Text;
             rbtn_MessageTypeQuery.Select();
         }

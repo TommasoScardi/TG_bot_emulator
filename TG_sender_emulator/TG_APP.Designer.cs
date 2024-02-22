@@ -55,6 +55,7 @@
             lbox_MessageCmd = new ListBox();
             groupBox6 = new GroupBox();
             lbox_MessageQuery = new ListBox();
+            ch_SaveMessage = new CheckBox();
             tableLayoutPanel1.SuspendLayout();
             groupBox1.SuspendLayout();
             gbox_Response.SuspendLayout();
@@ -84,6 +85,7 @@
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(ch_SaveMessage);
             groupBox1.Controls.Add(lbl_ReqSts);
             groupBox1.Controls.Add(label4);
             groupBox1.Controls.Add(btn_SendMessage);
@@ -372,6 +374,18 @@
             lbox_MessageQuery.TabIndex = 0;
             lbox_MessageQuery.MouseDoubleClick += lbox_MessageQuery_MouseDoubleClick;
             // 
+            // ch_SaveMessage
+            // 
+            ch_SaveMessage.AutoSize = true;
+            ch_SaveMessage.Checked = true;
+            ch_SaveMessage.CheckState = CheckState.Checked;
+            ch_SaveMessage.Location = new Point(460, 66);
+            ch_SaveMessage.Name = "ch_SaveMessage";
+            ch_SaveMessage.Size = new Size(98, 19);
+            ch_SaveMessage.TabIndex = 5;
+            ch_SaveMessage.Text = "save message";
+            ch_SaveMessage.UseVisualStyleBackColor = true;
+            // 
             // TG_APP
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -423,5 +437,6 @@
         private ListBox lbox_MessageQuery;
         private Label lbl_ReqSts;
         private Label label4;
+        private CheckBox ch_SaveMessage;
     }
 }
