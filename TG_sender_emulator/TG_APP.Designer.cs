@@ -30,8 +30,12 @@
         {
             tableLayoutPanel1 = new TableLayoutPanel();
             groupBox1 = new GroupBox();
+            ch_SaveMessage = new CheckBox();
             lbl_ReqSts = new Label();
             label4 = new Label();
+            btn_CleanResponseBody = new Button();
+            btn_CleanMessageText = new Button();
+            btn_CronRequest = new Button();
             btn_SendMessage = new Button();
             btn_Auth = new Button();
             label3 = new Label();
@@ -55,7 +59,6 @@
             lbox_MessageCmd = new ListBox();
             groupBox6 = new GroupBox();
             lbox_MessageQuery = new ListBox();
-            ch_SaveMessage = new CheckBox();
             tableLayoutPanel1.SuspendLayout();
             groupBox1.SuspendLayout();
             gbox_Response.SuspendLayout();
@@ -88,6 +91,9 @@
             groupBox1.Controls.Add(ch_SaveMessage);
             groupBox1.Controls.Add(lbl_ReqSts);
             groupBox1.Controls.Add(label4);
+            groupBox1.Controls.Add(btn_CleanResponseBody);
+            groupBox1.Controls.Add(btn_CleanMessageText);
+            groupBox1.Controls.Add(btn_CronRequest);
             groupBox1.Controls.Add(btn_SendMessage);
             groupBox1.Controls.Add(btn_Auth);
             groupBox1.Controls.Add(label3);
@@ -108,10 +114,22 @@
             groupBox1.TabStop = false;
             groupBox1.Text = "request";
             // 
+            // ch_SaveMessage
+            // 
+            ch_SaveMessage.AutoSize = true;
+            ch_SaveMessage.Checked = true;
+            ch_SaveMessage.CheckState = CheckState.Checked;
+            ch_SaveMessage.Location = new Point(197, 82);
+            ch_SaveMessage.Name = "ch_SaveMessage";
+            ch_SaveMessage.Size = new Size(98, 19);
+            ch_SaveMessage.TabIndex = 5;
+            ch_SaveMessage.Text = "save message";
+            ch_SaveMessage.UseVisualStyleBackColor = true;
+            // 
             // lbl_ReqSts
             // 
             lbl_ReqSts.AutoSize = true;
-            lbl_ReqSts.Location = new Point(700, 67);
+            lbl_ReqSts.Location = new Point(700, 73);
             lbl_ReqSts.Name = "lbl_ReqSts";
             lbl_ReqSts.Size = new Size(44, 15);
             lbl_ReqSts.TabIndex = 4;
@@ -120,16 +138,46 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(614, 67);
+            label4.Location = new Point(614, 73);
             label4.Name = "label4";
             label4.Size = new Size(80, 15);
             label4.TabIndex = 4;
             label4.Text = "request status";
             // 
+            // btn_CleanResponseBody
+            // 
+            btn_CleanResponseBody.Location = new Point(678, 105);
+            btn_CleanResponseBody.Name = "btn_CleanResponseBody";
+            btn_CleanResponseBody.Size = new Size(97, 23);
+            btn_CleanResponseBody.TabIndex = 3;
+            btn_CleanResponseBody.Text = "CLEAN BODY";
+            btn_CleanResponseBody.UseVisualStyleBackColor = true;
+            btn_CleanResponseBody.Click += btn_CleanResponseBody_Click;
+            // 
+            // btn_CleanMessageText
+            // 
+            btn_CleanMessageText.Location = new Point(578, 105);
+            btn_CleanMessageText.Name = "btn_CleanMessageText";
+            btn_CleanMessageText.Size = new Size(94, 23);
+            btn_CleanMessageText.TabIndex = 3;
+            btn_CleanMessageText.Text = "CLEAN TEXT";
+            btn_CleanMessageText.UseVisualStyleBackColor = true;
+            btn_CleanMessageText.Click += btn_CleanMessageText_Click;
+            // 
+            // btn_CronRequest
+            // 
+            btn_CronRequest.Location = new Point(520, 69);
+            btn_CronRequest.Name = "btn_CronRequest";
+            btn_CronRequest.Size = new Size(75, 23);
+            btn_CronRequest.TabIndex = 3;
+            btn_CronRequest.Text = "CRON";
+            btn_CronRequest.UseVisualStyleBackColor = true;
+            btn_CronRequest.Click += btn_CronRequest_Click;
+            // 
             // btn_SendMessage
             // 
             btn_SendMessage.Enabled = false;
-            btn_SendMessage.Location = new Point(700, 100);
+            btn_SendMessage.Location = new Point(466, 107);
             btn_SendMessage.Name = "btn_SendMessage";
             btn_SendMessage.Size = new Size(75, 23);
             btn_SendMessage.TabIndex = 3;
@@ -150,7 +198,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(143, 103);
+            label3.Location = new Point(105, 110);
             label3.Name = "label3";
             label3.Size = new Size(86, 15);
             label3.TabIndex = 2;
@@ -159,7 +207,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(143, 67);
+            label2.Location = new Point(466, 32);
             label2.Name = "label2";
             label2.Size = new Size(48, 15);
             label2.TabIndex = 2;
@@ -168,7 +216,7 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(143, 32);
+            label1.Location = new Point(114, 32);
             label1.Name = "label1";
             label1.Size = new Size(77, 15);
             label1.TabIndex = 2;
@@ -176,16 +224,16 @@
             // 
             // txt_MessageText
             // 
-            txt_MessageText.Location = new Point(241, 100);
+            txt_MessageText.Location = new Point(197, 107);
             txt_MessageText.Name = "txt_MessageText";
-            txt_MessageText.Size = new Size(436, 23);
+            txt_MessageText.Size = new Size(259, 23);
             txt_MessageText.TabIndex = 1;
             txt_MessageText.TextChanged += txt_Message_TextChanged;
             txt_MessageText.KeyUp += txt_MessageText_KeyUp;
             // 
             // txt_UserId
             // 
-            txt_UserId.Location = new Point(241, 64);
+            txt_UserId.Location = new Point(520, 29);
             txt_UserId.Name = "txt_UserId";
             txt_UserId.Size = new Size(152, 23);
             txt_UserId.TabIndex = 1;
@@ -193,15 +241,15 @@
             // 
             // txt_AuthToken
             // 
-            txt_AuthToken.Location = new Point(241, 29);
+            txt_AuthToken.Location = new Point(197, 29);
             txt_AuthToken.Name = "txt_AuthToken";
-            txt_AuthToken.Size = new Size(436, 23);
+            txt_AuthToken.Size = new Size(259, 23);
             txt_AuthToken.TabIndex = 1;
             // 
             // rbtn_MessageTypeQuery
             // 
             rbtn_MessageTypeQuery.AutoSize = true;
-            rbtn_MessageTypeQuery.Location = new Point(9, 107);
+            rbtn_MessageTypeQuery.Location = new Point(9, 57);
             rbtn_MessageTypeQuery.Name = "rbtn_MessageTypeQuery";
             rbtn_MessageTypeQuery.Size = new Size(101, 19);
             rbtn_MessageTypeQuery.TabIndex = 0;
@@ -225,7 +273,7 @@
             // rbtn_MessageTypeURL
             // 
             rbtn_MessageTypeURL.AutoSize = true;
-            rbtn_MessageTypeURL.Location = new Point(9, 57);
+            rbtn_MessageTypeURL.Location = new Point(9, 107);
             rbtn_MessageTypeURL.Name = "rbtn_MessageTypeURL";
             rbtn_MessageTypeURL.Size = new Size(39, 19);
             rbtn_MessageTypeURL.TabIndex = 0;
@@ -374,18 +422,6 @@
             lbox_MessageQuery.TabIndex = 0;
             lbox_MessageQuery.MouseDoubleClick += lbox_MessageQuery_MouseDoubleClick;
             // 
-            // ch_SaveMessage
-            // 
-            ch_SaveMessage.AutoSize = true;
-            ch_SaveMessage.Checked = true;
-            ch_SaveMessage.CheckState = CheckState.Checked;
-            ch_SaveMessage.Location = new Point(460, 66);
-            ch_SaveMessage.Name = "ch_SaveMessage";
-            ch_SaveMessage.Size = new Size(98, 19);
-            ch_SaveMessage.TabIndex = 5;
-            ch_SaveMessage.Text = "save message";
-            ch_SaveMessage.UseVisualStyleBackColor = true;
-            // 
             // TG_APP
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -438,5 +474,8 @@
         private Label lbl_ReqSts;
         private Label label4;
         private CheckBox ch_SaveMessage;
+        private Button btn_CleanResponseBody;
+        private Button btn_CleanMessageText;
+        private Button btn_CronRequest;
     }
 }

@@ -279,7 +279,7 @@ namespace TG_sender_emulator
             gbox_Response.Text = string.Format("({0})", (int)res.StatusCode);
             _token = (await res.Content.ReadAsStringAsync()).Trim();
             res.Dispose();
-            rtxt_ResponseBody.Text = _token;
+            rtxt_ResponseBody.Text = "TOKEN:\n" + _token;
             txt_AuthToken.Text = _token;
             txt_AuthToken.ReadOnly = true;
             btn_SendMessage.Enabled = true;
@@ -390,6 +390,26 @@ namespace TG_sender_emulator
             ch_SaveMessage.Checked = false;
             txt_MessageText.Text = lbox_MessageQuery.Text;
             rbtn_MessageTypeQuery.Select();
+        }
+
+        private void btn_CleanMessageText_Click(object sender, EventArgs e)
+        {
+            txt_MessageText.Text = string.Empty;
+        }
+
+        private void btn_CleanResponseBody_Click(object sender, EventArgs e)
+        {
+            rtxt_ResponseBody.Text = string.Empty;
+        }
+
+        private async void btn_CronRequest_Click(object sender, EventArgs e)
+        {
+            lbl_ReqSts.Text = "ONGOING";
+            HttpResponseMessage res = await sendRequest("", "http://localhost/bot/src/cron.php", RequestMode.AUTH, "", 0);
+            gbox_Response.Text = string.Format("({0})", (int)res.StatusCode);
+            rtxt_ResponseBody.Text = "CRON:\n" + (await res.Content.ReadAsStringAsync());
+            res.Dispose();
+            lbl_ReqSts.Text = "ENDED";
         }
     }
 
