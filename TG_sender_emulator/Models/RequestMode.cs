@@ -4,14 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TG_sender_emulator
+namespace TG_sender_emulator.Models
 {
-    enum RequestMode
+    public enum RequestMode
     {
+        NONE,
         PlainText,
         URL,
         Cmd,
-        Query,
-        AUTH
+        Query
     }
 }

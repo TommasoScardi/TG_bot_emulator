@@ -9,67 +9,109 @@ using Microsoft.VisualBasic.ApplicationServices;
 using System.Net;
 using Microsoft.VisualBasic;
 
+using Newtonsoft.Json;
+using TG_sender_emulator.Models;
+using System.ComponentModel;
+
 namespace TG_sender_emulator
 {
-    public partial class TG_APP : Form
+    public partial class FormEmulatorMessageSender : Form
     {
-        string _token = "";
-        long _userid = 0;
-        RequestMode _requestMode;
+        BotConfig _selectedBotConfig;
+        BindingList<BotConfig> _botsConfig;
+        BindingList<Models.User> _users;
         List<TG_Interaction> _tgInteractions;
+        RequestMode _requestMode;
 
-        public TG_APP()
+        public FormEmulatorMessageSender()
         {
-            _requestMode = RequestMode.PlainText;
+            _botsConfig = new BindingList<BotConfig>();
+            _users = new BindingList<Models.User>();
             _tgInteractions = new List<TG_Interaction>();
+            _requestMode = RequestMode.PlainText;
             InitializeComponent();
         }
 
-        private void loadDataFile(ref string authToken, ref long userId, ref List<TG_Interaction> tgInteractions)
+        private async Task loadDataFile()
         {
-            if (!Path.Exists(System.IO.Path.GetDirectoryName(Application.ExecutablePath) + "/data"))
+            string workingDir = Path.GetDirectoryName(Application.ExecutablePath);
+            if (!Path.Exists(workingDir + "/data"))
             {
-                Directory.CreateDirectory(System.IO.Path.GetDirectoryName(Application.ExecutablePath) + "/data");
-                File.Create(System.IO.Path.GetDirectoryName(Application.ExecutablePath) + "/data/data.txt").Close();
-                return;
+                Directory.CreateDirectory(workingDir + "/data");
             }
-            using StreamReader fRead = new StreamReader(System.IO.Path.GetDirectoryName(Application.ExecutablePath) + "/data/data.txt");
-            if (!fRead.EndOfStream)
+            else if (!Path.Exists(workingDir + "/data/config.json"))
             {
-                authToken = fRead.ReadLine().Trim();
-                userId = long.Parse(fRead.ReadLine().Trim());
-                tgInteractions = new List<TG_Interaction>();
-                while (!fRead.EndOfStream)
+                File.Create(workingDir + "/data/config.json").Close();
+            }
+            else if (!Path.Exists(workingDir + "/data/users.json"))
+            {
+                File.Create(workingDir + "/data/users.json").Close();
+            }
+            else if (!Path.Exists(workingDir + "/data/interactions.json"))
+            {
+                File.Create(workingDir + "/data/interactions.json").Close();
+            }
+            else
+            {
+                using (StreamReader fRead = new StreamReader(workingDir + "/data/config.json"))
                 {
-                    string[] data = fRead.ReadLine().Split(',');
-                    tgInteractions.Add(new TG_Interaction()
+                    string fileData = await fRead.ReadToEndAsync();
+                    if (fileData.Length <= 10)
                     {
-                        messageText = data[0].Trim(),
-                        requestMode = Enum.Parse<RequestMode>(data[1].Trim())
-                    });
+                        _botsConfig = new BindingList<BotConfig>();
+                    }
+                    else
+                    {
+                        _botsConfig = new BindingList<BotConfig>(JsonConvert.DeserializeObject<IList<BotConfig>>(fileData));
+                    }
+                }
+                using (StreamReader fRead = new StreamReader(workingDir + "/data/users.json"))
+                {
+                    string fileData = await fRead.ReadToEndAsync();
+                    _users = new BindingList<Models.User>(JsonConvert.DeserializeObject<IList<Models.User>>(fileData));
+                }
+
+                using (StreamReader fRead = new StreamReader(workingDir + "/data/interactions.json"))
+                {
+                    string fileData = await fRead.ReadToEndAsync();
+                    _tgInteractions = JsonConvert.DeserializeObject<List<TG_Interaction>>(fileData);
                 }
             }
         }
 
-        private void saveDataFile(string authToken, long userId, List<TG_Interaction> tgInteractions)
+        private void saveDataFile()
         {
-            using StreamWriter fWrite = new StreamWriter(System.IO.Path.GetDirectoryName(Application.ExecutablePath) + "/data/data.txt");
-            fWrite.WriteLine(authToken);
-            fWrite.WriteLine(userId.ToString());
-            foreach (TG_Interaction interaction in tgInteractions)
+            string workingDir = Path.GetDirectoryName(Application.ExecutablePath);
+            JsonSerializer serializer = new JsonSerializer();
+            serializer.NullValueHandling = NullValueHandling.Ignore;
+
+            using (StreamWriter fWrite = new StreamWriter(workingDir + "/data/config.json"))
+            using (JsonWriter jsonWriter = new JsonTextWriter(fWrite))
             {
-                fWrite.WriteLine(interaction.Serialize());
+                serializer.Serialize(jsonWriter, _botsConfig);
+            }
+
+            using (StreamWriter fWrite = new StreamWriter(workingDir + "/data/users.json"))
+            using (JsonWriter jsonWriter = new JsonTextWriter(fWrite))
+            {
+                serializer.Serialize(jsonWriter, _users.ToList());
+            }
+
+            using (StreamWriter fWrite = new StreamWriter(workingDir + "/data/interactions.json"))
+            using (JsonWriter jsonWriter = new JsonTextWriter(fWrite))
+            {
+                serializer.Serialize(jsonWriter, _tgInteractions);
             }
         }
 
-        private async Task<HttpResponseMessage> sendRequest(string token, string url, RequestMode mode, string messageText, long userId)
+        public static async Task<HttpResponseMessage> sendRequest(BotConfig config, string resourceUrl, RequestMode mode = RequestMode.NONE, long userId = 0, string messageText = "", long messageId = 0)
         {
             long timestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
             HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri(url);
-            if (token.Length > 0)
+            client.BaseAddress = new Uri(config.Url + resourceUrl);
+            if (config.WebhookToken.Length > 0)
             {
-                client.DefaultRequestHeaders.Add("X-Telegram-Bot-Api-Secret-Token", token);
+                client.DefaultRequestHeaders.Add("X-Telegram-Bot-Api-Secret-Token", config.WebhookToken);
             }
             HttpContent? body = null;
             switch (mode)
@@ -78,78 +120,78 @@ namespace TG_sender_emulator
                     body = new StringContent(string.Format(@"{{
                     ""update_id"": 0,
                     ""message"": {{
-                        ""message_id"": 0,
-                        ""text"": ""{0}"",
+                        ""message_id"": {0},
+                        ""text"": ""{1}"",
                         ""from"": {{
-                            ""id"": {1},
+                            ""id"": {2},
                             ""is_bot"": false,
                             ""first_name"": ""Test"",
                             ""language_code"": ""it""
                         }},
                         ""chat"": {{
-                            ""id"": {1},
+                            ""id"": {2},
                             ""first_name"": ""Test"",
                             ""type"": ""private""
                         }},
-                        ""date"": {2}
+                        ""date"": {3}
                     }}
-                }}", messageText, userId, timestamp), Encoding.UTF8, "application/json");
+                }}", messageId, messageText, userId, timestamp), Encoding.UTF8, "application/json");
                     break;
                 case RequestMode.Cmd:
                     body = new StringContent(string.Format(@"{{
                     ""update_id"": 0,
                     ""message"": {{
-                        ""message_id"": 0,
-                        ""text"": ""{0}"",
+                        ""message_id"": {0},
+                        ""text"": ""{1}"",
                         ""from"": {{
-                            ""id"": {1},
+                            ""id"": {2},
                             ""is_bot"": false,
                             ""first_name"": ""Test"",
                             ""language_code"": ""it""
                         }},
                         ""chat"": {{
-                            ""id"": {1},
+                            ""id"": {2},
                             ""first_name"": ""Test"",
                             ""type"": ""private""
                         }},
-                        ""date"": {2},
+                        ""date"": {3},
                         ""entities"": [
                             {{
                                 ""offset"": 0,
-                                ""length"": {3},
+                                ""length"": {4},
                                 ""type"": ""bot_command""
                             }}
                         ]
                     }}
-                }}", messageText, userId, timestamp, messageText.Length), Encoding.UTF8, "application/json");
+                }}", messageId, messageText, userId, timestamp, messageText.Length), Encoding.UTF8, "application/json");
                     break;
                 case RequestMode.URL:
                     body = new StringContent(string.Format(@"{{
                     ""update_id"": 0,
                     ""message"": {{
-                        ""message_id"": 0,
-                        ""text"": ""{0}"",
+                        ""message_id"": {0},
+                        ""text"": ""{1}"",
                         ""from"": {{
-                            ""id"": {1},
+                            ""id"": {2},
                             ""is_bot"": false,
                             ""first_name"": ""Test"",
                             ""language_code"": ""it""
                         }},
                         ""chat"": {{
-                            ""id"": {1},
+                            ""id"": {2},
                             ""first_name"": ""Test"",
                             ""type"": ""private""
                         }},
-                        ""date"": {2},
+                        ""date"": {3},
                         ""entities"": [
                             {{
                                 ""offset"": 0,
-                                ""length"": {3},
+                                ""length"": {4},
                                 ""type"": ""url""
                             }}
                         ]
                     }}
-                }}", messageText, userId, timestamp, messageText.Length), Encoding.UTF8, "application/json");
+                }}", messageId, messageText, userId, timestamp, messageText.Length), Encoding.UTF8, "application/json");
                     break;
                 case RequestMode.Query:
                     body = new StringContent(string.Format(@"{{
@@ -157,14 +199,14 @@ namespace TG_sender_emulator
                     ""callback_query"": {{
                         ""id"": 0,
                         ""from"": {{
-                            ""id"": {1},
+                            ""id"": {2},
                             ""is_bot"": false,
                             ""first_name"": ""Test"",
                             ""language_code"": ""it""
                         }},
-                        ""data"": ""{0}"",
+                        ""data"": ""{1}"",
                         ""message"": {{
-                            ""message_id"": 0,
+                            ""message_id"": {0},
                             ""from"": {{
                                 ""id"": 6487995220,
                                 ""is_bot"": true,
@@ -172,11 +214,11 @@ namespace TG_sender_emulator
                                 ""username"": ""sharingmusicatparties_bot""
                             }},
                             ""chat"": {{
-                                ""id"": {1},
+                                ""id"": {2},
                                 ""first_name"": ""Test"",
                                 ""type"": ""private""
                             }},
-                            ""date"": {2},
+                            ""date"": {3},
                             ""text"": ""Welcome to the new sharingmusicatparties bot"",
                             ""reply_markup"": {{
                                 ""inline_keyboard"": [
@@ -194,60 +236,86 @@ namespace TG_sender_emulator
                             }}
                         }}
                     }}
-                }}", messageText, userId, timestamp), Encoding.UTF8, "application/json");
+                }}", messageId, messageText, userId, timestamp), Encoding.UTF8, "application/json");
                     break;
             }
 
             HttpResponseMessage response;
             if (body != null)
             {
-                response = (await client.PostAsync(url, body));
+                response = (await client.PostAsync(config.Url + resourceUrl, body));
             }
             else
             {
-                response = (await client.GetAsync(url));
+                response = (await client.GetAsync(config.Url + resourceUrl));
             }
             return response;
         }
 
-        private void TG_APP_Load(object sender, EventArgs e)
+        private async void TG_APP_Load(object sender, EventArgs e)
         {
-            loadDataFile(ref _token, ref _userid, ref _tgInteractions);
+            await loadDataFile();
 
-            if (_token.Length > 0 && _userid > 0)
+            FormBotData formBotData = new FormBotData(_botsConfig, _selectedBotConfig);
+            formBotData.ShowDialog();
+            _selectedBotConfig = formBotData.SelectedConfig;
+
+            if (_selectedBotConfig == null)
             {
-                foreach (TG_Interaction interaction in _tgInteractions)
-                {
-                    switch (interaction.requestMode)
-                    {
-                        case RequestMode.PlainText:
-                            lbox_MessageText.Items.Add(interaction);
-                            break;
-                        case RequestMode.URL:
-                            lbox_MessageUrl.Items.Add(interaction);
-                            break;
-                        case RequestMode.Cmd:
-                            lbox_MessageCmd.Items.Add(interaction);
-                            break;
-                        case RequestMode.Query:
-                            lbox_MessageQuery.Items.Add(interaction);
-                            break;
-                    }
-                }
-
-                txt_AuthToken.Text = _token;
-                txt_UserId.Text = _userid.ToString();
-
-                btn_SendMessage.Enabled = true;
+                MessageBox.Show("nessuna configurazione caricata, chiusura programma");
+                this.Close();
             }
+
+            foreach (TG_Interaction interaction in _tgInteractions)
+            {
+                switch (interaction.RequestMode)
+                {
+                    case RequestMode.PlainText:
+                        lbox_MessageText.Items.Add(interaction);
+                        break;
+                    case RequestMode.URL:
+                        lbox_MessageUrl.Items.Add(interaction);
+                        break;
+                    case RequestMode.Cmd:
+                        lbox_MessageCmd.Items.Add(interaction);
+                        break;
+                    case RequestMode.Query:
+                        lbox_MessageQuery.Items.Add(interaction);
+                        break;
+                }
+            }
+
+            cbo_Users.DataSource = _users;
         }
 
         private void TG_APP_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (_token.Length > 0 && _userid > 0)
+            saveDataFile();
+        }
+
+        private void showConfigBoxToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FormBotData formBotData = new FormBotData(_botsConfig, _selectedBotConfig);
+            formBotData.ShowDialog();
+            _selectedBotConfig = formBotData.SelectedConfig;
+
+            if (_selectedBotConfig == null)
             {
-                saveDataFile(_token, _userid, _tgInteractions);
+                MessageBox.Show("nessuna configurazione caricata, chiusura programma");
+                this.Close();
             }
+        }
+
+        private void addUserToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FormAddUser formAddUser = new FormAddUser(_users);
+            formAddUser.ShowDialog();
+        }
+
+        private void authToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FormWebhookSecretAuth formWebhookSecretAuth = new FormWebhookSecretAuth(this, _selectedBotConfig);
+            formWebhookSecretAuth.ShowDialog();
         }
 
         #region radiobutton events
@@ -271,32 +339,6 @@ namespace TG_sender_emulator
             _requestMode = RequestMode.Query;
         }
         #endregion
-
-        private async void btn_Auth_Click(object sender, EventArgs e)
-        {
-            lbl_ReqSts.Text = "ONGOING";
-            HttpResponseMessage res = await sendRequest("", "http://localhost/bot/src/first_config_webhook.php?SET_WEBHOOK", RequestMode.AUTH, "", 0);
-            gbox_Response.Text = string.Format("({0})", (int)res.StatusCode);
-            _token = (await res.Content.ReadAsStringAsync()).Trim();
-            res.Dispose();
-            rtxt_ResponseBody.Text = "TOKEN:\n" + _token;
-            txt_AuthToken.Text = _token;
-            txt_AuthToken.ReadOnly = true;
-            btn_SendMessage.Enabled = true;
-            lbl_ReqSts.Text = "ENDED";
-        }
-        private void txt_UserId_TextChanged(object sender, EventArgs e)
-        {
-            if (txt_UserId.Text.Length > 0 && long.TryParse(txt_UserId.Text, out _userid))
-            {
-                btn_SendMessage.Enabled = true;
-            }
-            else
-            {
-                _userid = 0;
-                btn_SendMessage.Enabled = false;
-            }
-        }
 
         private void txt_Message_TextChanged(object sender, EventArgs e)
         {
@@ -327,17 +369,19 @@ namespace TG_sender_emulator
             }
 
             lbl_ReqSts.Text = "ONGOING";
-            HttpResponseMessage res = await sendRequest(_token, "http://localhost/bot/src/bot.php", _requestMode, txt_MessageText.Text, _userid);
+            int messageId = 0;
+            HttpResponseMessage res = await sendRequest(_selectedBotConfig, _selectedBotConfig.UrlWebhookEndpoint, _requestMode, ((Models.User)cbo_Users.SelectedItem).Id, txt_MessageText.Text, txt_MessageId.Text.Length > 0 && int.TryParse(txt_MessageId.Text, out messageId) ? messageId : 0);
             HttpStatusCode stsCode = res.StatusCode;
-            gbox_Response.Text = string.Format("({0})", (int)stsCode);
+            lbl_ResStatusCode.Text = string.Format("({0})", (int)stsCode);
             rtxt_ResponseBody.Text = (await res.Content.ReadAsStringAsync());
             res.Dispose();
             lbl_ReqSts.Text = "ENDED";
             if (stsCode == HttpStatusCode.OK && ch_SaveMessage.Checked)
             {
-                TG_Interaction newInteraction = TG_Interaction.DeSerialize(txt_MessageText.Text, _requestMode);
+                ch_SaveMessage.Checked = false;
+                TG_Interaction newInteraction = new TG_Interaction(txt_MessageText.Text, _requestMode);
                 _tgInteractions.Add(newInteraction);
-                switch (newInteraction.requestMode)
+                switch (newInteraction.RequestMode)
                 {
                     case RequestMode.PlainText:
                         lbox_MessageText.Items.Add(newInteraction);
@@ -357,13 +401,13 @@ namespace TG_sender_emulator
 
         private void txt_MessageText_KeyUp(object sender, KeyEventArgs e)
         {
-
             if (txt_MessageText.Text.Length > 0 && e.KeyCode == Keys.Enter)
             {
                 btn_Send_Click(null, null);
             }
         }
 
+        #region list box selected item changed events
         private void lbox_MessageText_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             ch_SaveMessage.Checked = false;
@@ -391,6 +435,7 @@ namespace TG_sender_emulator
             txt_MessageText.Text = lbox_MessageQuery.Text;
             rbtn_MessageTypeQuery.Select();
         }
+        #endregion
 
         private void btn_CleanMessageText_Click(object sender, EventArgs e)
         {
@@ -405,7 +450,7 @@ namespace TG_sender_emulator
         private async void btn_CronRequest_Click(object sender, EventArgs e)
         {
             lbl_ReqSts.Text = "ONGOING";
-            HttpResponseMessage res = await sendRequest("", "http://localhost/bot/src/cron.php", RequestMode.AUTH, "", 0);
+            HttpResponseMessage res = await sendRequest(_selectedBotConfig, _selectedBotConfig.UrlCronEndpoint);
             gbox_Response.Text = string.Format("({0})", (int)res.StatusCode);
             rtxt_ResponseBody.Text = "CRON:\n" + (await res.Content.ReadAsStringAsync());
             res.Dispose();
