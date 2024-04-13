@@ -106,112 +106,50 @@ namespace TG_sender_emulator
 
         public static async Task<HttpResponseMessage> sendRequest(BotConfigModel config, string resourceUrl, RequestModeModel mode = RequestModeModel.NONE, long userId = 0, string messageText = "", long messageId = 0)
         {
-            long timestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
-            HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri(config.Url + resourceUrl);
-            if (config.WebhookToken.Length > 0)
+            try
             {
-                client.DefaultRequestHeaders.Add("X-Telegram-Bot-Api-Secret-Token", config.WebhookToken);
-            }
-            HttpContent? body = null;
-            switch (mode)
-            {
-                case RequestModeModel.PlainText:
-                    body = new StringContent(string.Format(@"{{
-                    ""update_id"": 0,
-                    ""message"": {{
-                        ""message_id"": {0},
-                        ""text"": ""{1}"",
-                        ""from"": {{
-                            ""id"": {2},
-                            ""is_bot"": false,
-                            ""first_name"": ""Test"",
-                            ""language_code"": ""it""
-                        }},
-                        ""chat"": {{
-                            ""id"": {2},
-                            ""first_name"": ""Test"",
-                            ""type"": ""private""
-                        }},
-                        ""date"": {3}
-                    }}
-                }}", messageId, messageText, userId, timestamp), Encoding.UTF8, "application/json");
-                    break;
-                case RequestModeModel.Cmd:
-                    body = new StringContent(string.Format(@"{{
-                    ""update_id"": 0,
-                    ""message"": {{
-                        ""message_id"": {0},
-                        ""text"": ""{1}"",
-                        ""from"": {{
-                            ""id"": {2},
-                            ""is_bot"": false,
-                            ""first_name"": ""Test"",
-                            ""language_code"": ""it""
-                        }},
-                        ""chat"": {{
-                            ""id"": {2},
-                            ""first_name"": ""Test"",
-                            ""type"": ""private""
-                        }},
-                        ""date"": {3},
-                        ""entities"": [
-                            {{
-                                ""offset"": 0,
-                                ""length"": {4},
-                                ""type"": ""bot_command""
-                            }}
-                        ]
-                    }}
-                }}", messageId, messageText, userId, timestamp, messageText.Length), Encoding.UTF8, "application/json");
-                    break;
-                case RequestModeModel.URL:
-                    body = new StringContent(string.Format(@"{{
-                    ""update_id"": 0,
-                    ""message"": {{
-                        ""message_id"": {0},
-                        ""text"": ""{1}"",
-                        ""from"": {{
-                            ""id"": {2},
-                            ""is_bot"": false,
-                            ""first_name"": ""Test"",
-                            ""language_code"": ""it""
-                        }},
-                        ""chat"": {{
-                            ""id"": {2},
-                            ""first_name"": ""Test"",
-                            ""type"": ""private""
-                        }},
-                        ""date"": {3},
-                        ""entities"": [
-                            {{
-                                ""offset"": 0,
-                                ""length"": {4},
-                                ""type"": ""url""
-                            }}
-                        ]
-                    }}
-                }}", messageId, messageText, userId, timestamp, messageText.Length), Encoding.UTF8, "application/json");
-                    break;
-                case RequestModeModel.Query:
-                    body = new StringContent(string.Format(@"{{
-                    ""update_id"": 0,
-                    ""callback_query"": {{
-                        ""id"": 0,
-                        ""from"": {{
-                            ""id"": {2},
-                            ""is_bot"": false,
-                            ""first_name"": ""Test"",
-                            ""language_code"": ""it""
-                        }},
-                        ""data"": ""{1}"",
+                long timestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
+                HttpClient client = new HttpClient();
+                client.BaseAddress = new Uri(config.Url + resourceUrl);
+                if (config.WebhookToken.Length > 0)
+                {
+                    client.DefaultRequestHeaders.Add("X-Telegram-Bot-Api-Secret-Token", config.WebhookToken);
+                }
+                HttpContent? body = null;
+                switch (mode)
+                {
+                    case RequestModeModel.PlainText:
+                        body = new StringContent(string.Format(@"{{
+                        ""update_id"": 0,
                         ""message"": {{
                             ""message_id"": {0},
+                            ""text"": ""{1}"",
                             ""from"": {{
-                                ""id"": 6487995220,
-                                ""is_bot"": true,
-                                ""first_name"": ""Sharing Music At Parties"",
-                                ""username"": ""sharingmusicatparties_bot""
+                                ""id"": {2},
+                                ""is_bot"": false,
+                                ""first_name"": ""Test"",
+                                ""language_code"": ""it""
+                            }},
+                            ""chat"": {{
+                                ""id"": {2},
+                                ""first_name"": ""Test"",
+                                ""type"": ""private""
+                            }},
+                            ""date"": {3}
+                        }}
+                    }}", messageId, messageText, userId, timestamp), Encoding.UTF8, "application/json");
+                        break;
+                    case RequestModeModel.Cmd:
+                        body = new StringContent(string.Format(@"{{
+                        ""update_id"": 0,
+                        ""message"": {{
+                            ""message_id"": {0},
+                            ""text"": ""{1}"",
+                            ""from"": {{
+                                ""id"": {2},
+                                ""is_bot"": false,
+                                ""first_name"": ""Test"",
+                                ""language_code"": ""it""
                             }},
                             ""chat"": {{
                                 ""id"": {2},
@@ -219,37 +157,110 @@ namespace TG_sender_emulator
                                 ""type"": ""private""
                             }},
                             ""date"": {3},
-                            ""text"": ""Welcome to the new sharingmusicatparties bot"",
-                            ""reply_markup"": {{
-                                ""inline_keyboard"": [
-                                    [
-                                        {{
-                                            ""text"": ""start a party room"",
-                                            ""callback_data"": ""createNewPartyRoom""
-                                        }},
-                                        {{
-                                            ""text"": ""join a party room"",
-                                            ""callback_data"": ""joinPartyRoom""
-                                        }}
+                            ""entities"": [
+                                {{
+                                    ""offset"": 0,
+                                    ""length"": {4},
+                                    ""type"": ""bot_command""
+                                }}
+                            ]
+                        }}
+                    }}", messageId, messageText, userId, timestamp, messageText.Length), Encoding.UTF8, "application/json");
+                        break;
+                    case RequestModeModel.URL:
+                        body = new StringContent(string.Format(@"{{
+                        ""update_id"": 0,
+                        ""message"": {{
+                            ""message_id"": {0},
+                            ""text"": ""{1}"",
+                            ""from"": {{
+                                ""id"": {2},
+                                ""is_bot"": false,
+                                ""first_name"": ""Test"",
+                                ""language_code"": ""it""
+                            }},
+                            ""chat"": {{
+                                ""id"": {2},
+                                ""first_name"": ""Test"",
+                                ""type"": ""private""
+                            }},
+                            ""date"": {3},
+                            ""entities"": [
+                                {{
+                                    ""offset"": 0,
+                                    ""length"": {4},
+                                    ""type"": ""url""
+                                }}
+                            ]
+                        }}
+                    }}", messageId, messageText, userId, timestamp, messageText.Length), Encoding.UTF8, "application/json");
+                        break;
+                    case RequestModeModel.Query:
+                        body = new StringContent(string.Format(@"{{
+                        ""update_id"": 0,
+                        ""callback_query"": {{
+                            ""id"": 0,
+                            ""from"": {{
+                                ""id"": {2},
+                                ""is_bot"": false,
+                                ""first_name"": ""Test"",
+                                ""language_code"": ""it""
+                            }},
+                            ""data"": ""{1}"",
+                            ""message"": {{
+                                ""message_id"": {0},
+                                ""from"": {{
+                                    ""id"": 6487995220,
+                                    ""is_bot"": true,
+                                    ""first_name"": ""Sharing Music At Parties"",
+                                    ""username"": ""sharingmusicatparties_bot""
+                                }},
+                                ""chat"": {{
+                                    ""id"": {2},
+                                    ""first_name"": ""Test"",
+                                    ""type"": ""private""
+                                }},
+                                ""date"": {3},
+                                ""text"": ""Welcome to the new sharingmusicatparties bot"",
+                                ""reply_markup"": {{
+                                    ""inline_keyboard"": [
+                                        [
+                                            {{
+                                                ""text"": ""start a party room"",
+                                                ""callback_data"": ""createNewPartyRoom""
+                                            }},
+                                            {{
+                                                ""text"": ""join a party room"",
+                                                ""callback_data"": ""joinPartyRoom""
+                                            }}
+                                        ]
                                     ]
-                                ]
+                                }}
                             }}
                         }}
-                    }}
-                }}", messageId, messageText, userId, timestamp), Encoding.UTF8, "application/json");
-                    break;
-            }
+                    }}", messageId, messageText, userId, timestamp), Encoding.UTF8, "application/json");
+                        break;
+                }
 
-            HttpResponseMessage response;
-            if (body != null)
-            {
-                response = (await client.PostAsync(config.Url + resourceUrl, body));
+                HttpResponseMessage response;
+                if (body != null)
+                {
+                    response = (await client.PostAsync(config.Url + resourceUrl, body));
+                }
+                else
+                {
+                    response = (await client.GetAsync(config.Url + resourceUrl));
+                }
+                return response;
             }
-            else
+            catch(WebException webEx)
             {
-                response = (await client.GetAsync(config.Url + resourceUrl));
+                MessageBox.Show("Web Exception:\n" + webEx.Message);
             }
-            return response;
+            catch(TaskCanceledException tskEx)
+            {
+                MessageBox.Show("Request timeout");
+            }
         }
 
         private async void TG_APP_Load(object sender, EventArgs e)
@@ -369,13 +380,14 @@ namespace TG_sender_emulator
             }
 
             lbl_ReqSts.Text = "ONGOING";
+            lbl_ResStatusCode.Text = "(xxx)";
             int messageId = 0;
             HttpResponseMessage res = await sendRequest(_selectedBotConfig, _selectedBotConfig.UrlWebhookEndpoint, _requestMode, ((Models.UserModel)cbo_Users.SelectedItem).Id, txt_MessageText.Text, txt_MessageId.Text.Length > 0 && int.TryParse(txt_MessageId.Text, out messageId) ? messageId : 0);
             HttpStatusCode stsCode = res.StatusCode;
-            lbl_ResStatusCode.Text = string.Format("({0})", (int)stsCode);
             rtxt_ResponseBody.Text = (await res.Content.ReadAsStringAsync());
             res.Dispose();
             lbl_ReqSts.Text = "ENDED";
+            lbl_ResStatusCode.Text = string.Format("({0})", (int)stsCode);
             if (stsCode == HttpStatusCode.OK && ch_SaveMessage.Checked)
             {
                 ch_SaveMessage.Checked = false;
@@ -450,11 +462,13 @@ namespace TG_sender_emulator
         private async void btn_CronRequest_Click(object sender, EventArgs e)
         {
             lbl_ReqSts.Text = "ONGOING";
+            lbl_ResStatusCode.Text = "(xxx)";
             HttpResponseMessage res = await sendRequest(_selectedBotConfig, _selectedBotConfig.UrlCronEndpoint);
-            gbox_Response.Text = string.Format("({0})", (int)res.StatusCode);
+            HttpStatusCode stsCode = res.StatusCode;
             rtxt_ResponseBody.Text = "CRON:\n" + (await res.Content.ReadAsStringAsync());
             res.Dispose();
             lbl_ReqSts.Text = "ENDED";
+            lbl_ResStatusCode.Text = string.Format("({0})", (int)stsCode);
         }
     }
 
