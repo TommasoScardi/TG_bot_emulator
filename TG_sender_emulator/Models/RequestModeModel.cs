@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TG_sender_emulator.Models
 {
-    public enum RequestMode
+    public enum RequestModeModel
     {
         NONE,
         PlainText,

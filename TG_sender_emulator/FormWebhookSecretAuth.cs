@@ -15,8 +15,8 @@ namespace TG_sender_emulator
     public partial class FormWebhookSecretAuth : Form
     {
         Form _caller;
-        BotConfig _botConfig;
-        public FormWebhookSecretAuth(Form caller, BotConfig botConfig)
+        BotConfigModel _botConfig;
+        public FormWebhookSecretAuth(Form caller, BotConfigModel botConfig)
         {
             _caller = caller;
             _botConfig = botConfig;

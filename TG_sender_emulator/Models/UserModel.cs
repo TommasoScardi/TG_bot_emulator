@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TG_sender_emulator.Models
 {
-    public class User
+    public class UserModel
     {
         public long Id { get; set; }
         public string Name { get; set; }

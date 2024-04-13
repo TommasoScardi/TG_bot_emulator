@@ -17,18 +17,18 @@ namespace TG_sender_emulator
 {
     public partial class FormEmulatorMessageSender : Form
     {
-        BotConfig _selectedBotConfig;
-        BindingList<BotConfig> _botsConfig;
-        BindingList<Models.User> _users;
-        List<TG_Interaction> _tgInteractions;
-        RequestMode _requestMode;
+        BotConfigModel _selectedBotConfig;
+        BindingList<BotConfigModel> _botsConfig;
+        BindingList<Models.UserModel> _users;
+        List<InteractionModel> _tgInteractions;
+        RequestModeModel _requestMode;
 
         public FormEmulatorMessageSender()
         {
-            _botsConfig = new BindingList<BotConfig>();
-            _users = new BindingList<Models.User>();
-            _tgInteractions = new List<TG_Interaction>();
-            _requestMode = RequestMode.PlainText;
+            _botsConfig = new BindingList<BotConfigModel>();
+            _users = new BindingList<Models.UserModel>();
+            _tgInteractions = new List<InteractionModel>();
+            _requestMode = RequestModeModel.PlainText;
             InitializeComponent();
         }
 
@@ -58,23 +58,23 @@ namespace TG_sender_emulator
                     string fileData = await fRead.ReadToEndAsync();
                     if (fileData.Length <= 10)
                     {
-                        _botsConfig = new BindingList<BotConfig>();
+                        _botsConfig = new BindingList<BotConfigModel>();
                     }
                     else
                     {
-                        _botsConfig = new BindingList<BotConfig>(JsonConvert.DeserializeObject<IList<BotConfig>>(fileData));
+                        _botsConfig = new BindingList<BotConfigModel>(JsonConvert.DeserializeObject<IList<BotConfigModel>>(fileData));
                     }
                 }
                 using (StreamReader fRead = new StreamReader(workingDir + "/data/users.json"))
                 {
                     string fileData = await fRead.ReadToEndAsync();
-                    _users = new BindingList<Models.User>(JsonConvert.DeserializeObject<IList<Models.User>>(fileData));
+                    _users = new BindingList<Models.UserModel>(JsonConvert.DeserializeObject<IList<Models.UserModel>>(fileData));
                 }
 
                 using (StreamReader fRead = new StreamReader(workingDir + "/data/interactions.json"))
                 {
                     string fileData = await fRead.ReadToEndAsync();
-                    _tgInteractions = JsonConvert.DeserializeObject<List<TG_Interaction>>(fileData);
+                    _tgInteractions = JsonConvert.DeserializeObject<List<InteractionModel>>(fileData);
                 }
             }
         }
@@ -104,7 +104,7 @@ namespace TG_sender_emulator
             }
         }
 
-        public static async Task<HttpResponseMessage> sendRequest(BotConfig config, string resourceUrl, RequestMode mode = RequestMode.NONE, long userId = 0, string messageText = "", long messageId = 0)
+        public static async Task<HttpResponseMessage> sendRequest(BotConfigModel config, string resourceUrl, RequestModeModel mode = RequestModeModel.NONE, long userId = 0, string messageText = "", long messageId = 0)
         {
             long timestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
             HttpClient client = new HttpClient();
@@ -116,7 +116,7 @@ namespace TG_sender_emulator
             HttpContent? body = null;
             switch (mode)
             {
-                case RequestMode.PlainText:
+                case RequestModeModel.PlainText:
                     body = new StringContent(string.Format(@"{{
                     ""update_id"": 0,
                     ""message"": {{
@@ -137,7 +137,7 @@ namespace TG_sender_emulator
                     }}
                 }}", messageId, messageText, userId, timestamp), Encoding.UTF8, "application/json");
                     break;
-                case RequestMode.Cmd:
+                case RequestModeModel.Cmd:
                     body = new StringContent(string.Format(@"{{
                     ""update_id"": 0,
                     ""message"": {{
@@ -165,7 +165,7 @@ namespace TG_sender_emulator
                     }}
                 }}", messageId, messageText, userId, timestamp, messageText.Length), Encoding.UTF8, "application/json");
                     break;
-                case RequestMode.URL:
+                case RequestModeModel.URL:
                     body = new StringContent(string.Format(@"{{
                     ""update_id"": 0,
                     ""message"": {{
@@ -193,7 +193,7 @@ namespace TG_sender_emulator
                     }}
                 }}", messageId, messageText, userId, timestamp, messageText.Length), Encoding.UTF8, "application/json");
                     break;
-                case RequestMode.Query:
+                case RequestModeModel.Query:
                     body = new StringContent(string.Format(@"{{
                     ""update_id"": 0,
                     ""callback_query"": {{
@@ -266,20 +266,20 @@ namespace TG_sender_emulator
                 this.Close();
             }
 
-            foreach (TG_Interaction interaction in _tgInteractions)
+            foreach (InteractionModel interaction in _tgInteractions)
             {
                 switch (interaction.RequestMode)
                 {
-                    case RequestMode.PlainText:
+                    case RequestModeModel.PlainText:
                         lbox_MessageText.Items.Add(interaction);
                         break;
-                    case RequestMode.URL:
+                    case RequestModeModel.URL:
                         lbox_MessageUrl.Items.Add(interaction);
                         break;
-                    case RequestMode.Cmd:
+                    case RequestModeModel.Cmd:
                         lbox_MessageCmd.Items.Add(interaction);
                         break;
-                    case RequestMode.Query:
+                    case RequestModeModel.Query:
                         lbox_MessageQuery.Items.Add(interaction);
                         break;
                 }
@@ -321,22 +321,22 @@ namespace TG_sender_emulator
         #region radiobutton events
         private void rbtn_ModeText_CheckedChanged(object sender, EventArgs e)
         {
-            _requestMode = RequestMode.PlainText;
+            _requestMode = RequestModeModel.PlainText;
         }
 
         private void rbtn_ModeUrl_CheckedChanged(object sender, EventArgs e)
         {
-            _requestMode = RequestMode.URL;
+            _requestMode = RequestModeModel.URL;
         }
 
         private void rbtn_ModeCmd_CheckedChanged(object sender, EventArgs e)
         {
-            _requestMode = RequestMode.Cmd;
+            _requestMode = RequestModeModel.Cmd;
         }
 
         private void rbtn_ModeQuery_CheckedChanged(object sender, EventArgs e)
         {
-            _requestMode = RequestMode.Query;
+            _requestMode = RequestModeModel.Query;
         }
         #endregion
 
@@ -370,7 +370,7 @@ namespace TG_sender_emulator
 
             lbl_ReqSts.Text = "ONGOING";
             int messageId = 0;
-            HttpResponseMessage res = await sendRequest(_selectedBotConfig, _selectedBotConfig.UrlWebhookEndpoint, _requestMode, ((Models.User)cbo_Users.SelectedItem).Id, txt_MessageText.Text, txt_MessageId.Text.Length > 0 && int.TryParse(txt_MessageId.Text, out messageId) ? messageId : 0);
+            HttpResponseMessage res = await sendRequest(_selectedBotConfig, _selectedBotConfig.UrlWebhookEndpoint, _requestMode, ((Models.UserModel)cbo_Users.SelectedItem).Id, txt_MessageText.Text, txt_MessageId.Text.Length > 0 && int.TryParse(txt_MessageId.Text, out messageId) ? messageId : 0);
             HttpStatusCode stsCode = res.StatusCode;
             lbl_ResStatusCode.Text = string.Format("({0})", (int)stsCode);
             rtxt_ResponseBody.Text = (await res.Content.ReadAsStringAsync());
@@ -379,20 +379,20 @@ namespace TG_sender_emulator
             if (stsCode == HttpStatusCode.OK && ch_SaveMessage.Checked)
             {
                 ch_SaveMessage.Checked = false;
-                TG_Interaction newInteraction = new TG_Interaction(txt_MessageText.Text, _requestMode);
+                InteractionModel newInteraction = new InteractionModel(txt_MessageText.Text, _requestMode);
                 _tgInteractions.Add(newInteraction);
                 switch (newInteraction.RequestMode)
                 {
-                    case RequestMode.PlainText:
+                    case RequestModeModel.PlainText:
                         lbox_MessageText.Items.Add(newInteraction);
                         break;
-                    case RequestMode.URL:
+                    case RequestModeModel.URL:
                         lbox_MessageUrl.Items.Add(newInteraction);
                         break;
-                    case RequestMode.Cmd:
+                    case RequestModeModel.Cmd:
                         lbox_MessageCmd.Items.Add(newInteraction);
                         break;
-                    case RequestMode.Query:
+                    case RequestModeModel.Query:
                         lbox_MessageQuery.Items.Add(newInteraction);
                         break;
                 }

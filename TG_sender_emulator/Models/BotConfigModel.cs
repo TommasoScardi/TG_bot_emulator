@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TG_sender_emulator.Models
 {
-    public class BotConfig
+    public class BotConfigModel
     {
         public string ConfigName { get; set; }
         public string Url { get; set; }

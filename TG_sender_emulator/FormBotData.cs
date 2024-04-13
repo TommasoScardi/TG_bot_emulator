@@ -14,10 +14,10 @@ namespace TG_sender_emulator
 {
     public partial class FormBotData : Form
     {
-        BindingList<BotConfig> _botsConfig;
-        public BotConfig SelectedConfig { get; set; }
+        BindingList<BotConfigModel> _botsConfig;
+        public BotConfigModel SelectedConfig { get; set; }
 
-        public FormBotData(BindingList<BotConfig> botsConfig, BotConfig selectedConfig)
+        public FormBotData(BindingList<BotConfigModel> botsConfig, BotConfigModel selectedConfig)
         {
             _botsConfig = botsConfig;
             SelectedConfig = selectedConfig;
@@ -45,7 +45,7 @@ namespace TG_sender_emulator
             {
                 if (txt_ConfigName.Text.Length > 0 && txt_EndpointsURL.Text.Length > 0)
                 {
-                    BotConfig newConfig = new BotConfig();
+                    BotConfigModel newConfig = new BotConfigModel();
                     newConfig.ConfigName = txt_ConfigName.Text;
                     newConfig.Url = txt_EndpointsURL.Text;
                     newConfig.UrlWebhookEndpoint = txt_WebhookEP.Text;
@@ -61,7 +61,7 @@ namespace TG_sender_emulator
             }
             else
             {
-                SelectedConfig = cbo_BotsConfig.SelectedItem as BotConfig;
+                SelectedConfig = cbo_BotsConfig.SelectedItem as BotConfigModel;
 
                 if (SelectedConfig.ConfigName != txt_ConfigName.Text
                     || SelectedConfig.Url != txt_EndpointsURL.Text
@@ -85,7 +85,7 @@ namespace TG_sender_emulator
         {
             if (cbo_BotsConfig.SelectedIndex >= 0)
             {
-                SelectedConfig = cbo_BotsConfig.SelectedItem as BotConfig;
+                SelectedConfig = cbo_BotsConfig.SelectedItem as BotConfigModel;
                 txt_ConfigName.Text = SelectedConfig.ConfigName;
                 txt_EndpointsURL.Text = SelectedConfig.Url;
                 txt_WebhookEP.Text = SelectedConfig.UrlWebhookEndpoint;

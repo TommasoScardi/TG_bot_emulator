@@ -12,8 +12,8 @@ namespace TG_sender_emulator
 {
     public partial class FormAddUser : Form
     {
-        BindingList<Models.User> _users;
-        public FormAddUser(BindingList<Models.User> users)
+        BindingList<Models.UserModel> _users;
+        public FormAddUser(BindingList<Models.UserModel> users)
         {
             _users = users;
             InitializeComponent();
@@ -21,7 +21,7 @@ namespace TG_sender_emulator
 
         private void btn_AddSubmit_Click(object sender, EventArgs e)
         {
-            Models.User newUser = new Models.User() { Id = long.Parse(txt_UID.Text), Name = txt_UserName.Text };
+            Models.UserModel newUser = new Models.UserModel() { Id = long.Parse(txt_UID.Text), Name = txt_UserName.Text };
             _users.Add(newUser);
         }
 
