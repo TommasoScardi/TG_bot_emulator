@@ -111,7 +111,7 @@ namespace TG_sender_emulator
                 long timestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
                 HttpClient client = new HttpClient();
                 client.BaseAddress = new Uri(config.Url + resourceUrl);
-                if (config.WebhookToken.Length > 0)
+                if (config.WebhookToken != null && config.WebhookToken.Length > 0)
                 {
                     client.DefaultRequestHeaders.Add("X-Telegram-Bot-Api-Secret-Token", config.WebhookToken);
                 }
@@ -256,10 +256,18 @@ namespace TG_sender_emulator
             catch(WebException webEx)
             {
                 MessageBox.Show("Web Exception:\n" + webEx.Message);
+                return null;
             }
             catch(TaskCanceledException tskEx)
             {
                 MessageBox.Show("Request timeout");
+                return null;
+            }
+            catch(HttpRequestException httpExc)
+            {
+
+                MessageBox.Show(httpExc.Message, "HTTP request error");
+                return null;
             }
         }
 
@@ -383,30 +391,33 @@ namespace TG_sender_emulator
             lbl_ResStatusCode.Text = "(xxx)";
             int messageId = 0;
             HttpResponseMessage res = await sendRequest(_selectedBotConfig, _selectedBotConfig.UrlWebhookEndpoint, _requestMode, ((Models.UserModel)cbo_Users.SelectedItem).Id, txt_MessageText.Text, txt_MessageId.Text.Length > 0 && int.TryParse(txt_MessageId.Text, out messageId) ? messageId : 0);
-            HttpStatusCode stsCode = res.StatusCode;
-            rtxt_ResponseBody.Text = (await res.Content.ReadAsStringAsync());
-            res.Dispose();
-            lbl_ReqSts.Text = "ENDED";
-            lbl_ResStatusCode.Text = string.Format("({0})", (int)stsCode);
-            if (stsCode == HttpStatusCode.OK && ch_SaveMessage.Checked)
+            if (res != null)
             {
-                ch_SaveMessage.Checked = false;
-                InteractionModel newInteraction = new InteractionModel(txt_MessageText.Text, _requestMode);
-                _tgInteractions.Add(newInteraction);
-                switch (newInteraction.RequestMode)
+                HttpStatusCode stsCode = res.StatusCode;
+                rtxt_ResponseBody.Text = (await res.Content.ReadAsStringAsync());
+                res.Dispose();
+                lbl_ReqSts.Text = "ENDED";
+                lbl_ResStatusCode.Text = string.Format("({0})", (int)stsCode);
+                if (stsCode == HttpStatusCode.OK && ch_SaveMessage.Checked)
                 {
-                    case RequestModeModel.PlainText:
-                        lbox_MessageText.Items.Add(newInteraction);
-                        break;
-                    case RequestModeModel.URL:
-                        lbox_MessageUrl.Items.Add(newInteraction);
-                        break;
-                    case RequestModeModel.Cmd:
-                        lbox_MessageCmd.Items.Add(newInteraction);
-                        break;
-                    case RequestModeModel.Query:
-                        lbox_MessageQuery.Items.Add(newInteraction);
-                        break;
+                    ch_SaveMessage.Checked = false;
+                    InteractionModel newInteraction = new InteractionModel(txt_MessageText.Text, _requestMode);
+                    _tgInteractions.Add(newInteraction);
+                    switch (newInteraction.RequestMode)
+                    {
+                        case RequestModeModel.PlainText:
+                            lbox_MessageText.Items.Add(newInteraction);
+                            break;
+                        case RequestModeModel.URL:
+                            lbox_MessageUrl.Items.Add(newInteraction);
+                            break;
+                        case RequestModeModel.Cmd:
+                            lbox_MessageCmd.Items.Add(newInteraction);
+                            break;
+                        case RequestModeModel.Query:
+                            lbox_MessageQuery.Items.Add(newInteraction);
+                            break;
+                    }
                 }
             }
         }
@@ -464,11 +475,14 @@ namespace TG_sender_emulator
             lbl_ReqSts.Text = "ONGOING";
             lbl_ResStatusCode.Text = "(xxx)";
             HttpResponseMessage res = await sendRequest(_selectedBotConfig, _selectedBotConfig.UrlCronEndpoint);
-            HttpStatusCode stsCode = res.StatusCode;
-            rtxt_ResponseBody.Text = "CRON:\n" + (await res.Content.ReadAsStringAsync());
-            res.Dispose();
-            lbl_ReqSts.Text = "ENDED";
-            lbl_ResStatusCode.Text = string.Format("({0})", (int)stsCode);
+            if (res != null)
+            {
+                HttpStatusCode stsCode = res.StatusCode;
+                rtxt_ResponseBody.Text = "CRON:\n" + (await res.Content.ReadAsStringAsync());
+                res.Dispose();
+                lbl_ReqSts.Text = "ENDED";
+                lbl_ResStatusCode.Text = string.Format("({0})", (int)stsCode);
+            }
         }
     }
 
