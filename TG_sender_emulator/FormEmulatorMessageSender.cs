@@ -104,7 +104,7 @@ namespace TG_sender_emulator
             }
         }
 
-        public static async Task<HttpResponseMessage> sendRequest(BotConfigModel config, string resourceUrl, RequestModeModel mode = RequestModeModel.NONE, long userId = 0, string messageText = "", long messageId = 0)
+        public static async Task<HttpResponseMessage> sendRequest(BotConfigModel config, string resourceUrl, RequestModeModel mode = RequestModeModel.NONE, Models.UserModel user = null, string messageText = "", long messageId = 0)
         {
             try
             {
@@ -127,17 +127,17 @@ namespace TG_sender_emulator
                             ""from"": {{
                                 ""id"": {2},
                                 ""is_bot"": false,
-                                ""first_name"": ""Test"",
+                                ""first_name"": {3},
                                 ""language_code"": ""it""
                             }},
                             ""chat"": {{
                                 ""id"": {2},
-                                ""first_name"": ""Test"",
+                                ""first_name"": {3},
                                 ""type"": ""private""
                             }},
-                            ""date"": {3}
+                            ""date"": {4}
                         }}
-                    }}", messageId, messageText, userId, timestamp), Encoding.UTF8, "application/json");
+                    }}", messageId, messageText, user.Id, user.Name, timestamp), Encoding.UTF8, "application/json");
                         break;
                     case RequestModeModel.Cmd:
                         body = new StringContent(string.Format(@"{{
@@ -148,24 +148,24 @@ namespace TG_sender_emulator
                             ""from"": {{
                                 ""id"": {2},
                                 ""is_bot"": false,
-                                ""first_name"": ""Test"",
+                                ""first_name"": {3},
                                 ""language_code"": ""it""
                             }},
                             ""chat"": {{
                                 ""id"": {2},
-                                ""first_name"": ""Test"",
+                                ""first_name"": {3},
                                 ""type"": ""private""
                             }},
-                            ""date"": {3},
+                            ""date"": {4},
                             ""entities"": [
                                 {{
                                     ""offset"": 0,
-                                    ""length"": {4},
+                                    ""length"": {5},
                                     ""type"": ""bot_command""
                                 }}
                             ]
                         }}
-                    }}", messageId, messageText, userId, timestamp, messageText.Length), Encoding.UTF8, "application/json");
+                    }}", messageId, messageText, user.Id, user.Name, timestamp, messageText.Length), Encoding.UTF8, "application/json");
                         break;
                     case RequestModeModel.URL:
                         body = new StringContent(string.Format(@"{{
@@ -176,24 +176,24 @@ namespace TG_sender_emulator
                             ""from"": {{
                                 ""id"": {2},
                                 ""is_bot"": false,
-                                ""first_name"": ""Test"",
+                                ""first_name"": {3},
                                 ""language_code"": ""it""
                             }},
                             ""chat"": {{
                                 ""id"": {2},
-                                ""first_name"": ""Test"",
+                                ""first_name"": {3},
                                 ""type"": ""private""
                             }},
-                            ""date"": {3},
+                            ""date"": {4},
                             ""entities"": [
                                 {{
                                     ""offset"": 0,
-                                    ""length"": {4},
+                                    ""length"": {5},
                                     ""type"": ""url""
                                 }}
                             ]
                         }}
-                    }}", messageId, messageText, userId, timestamp, messageText.Length), Encoding.UTF8, "application/json");
+                    }}", messageId, messageText, user.Id, user.Name, timestamp, messageText.Length), Encoding.UTF8, "application/json");
                         break;
                     case RequestModeModel.Query:
                         body = new StringContent(string.Format(@"{{
@@ -203,24 +203,24 @@ namespace TG_sender_emulator
                             ""from"": {{
                                 ""id"": {2},
                                 ""is_bot"": false,
-                                ""first_name"": ""Test"",
+                                ""first_name"": {3},
                                 ""language_code"": ""it""
                             }},
                             ""data"": ""{1}"",
                             ""message"": {{
                                 ""message_id"": {0},
                                 ""from"": {{
-                                    ""id"": 6487995220,
+                                    ""id"": 0,
                                     ""is_bot"": true,
-                                    ""first_name"": ""Sharing Music At Parties"",
-                                    ""username"": ""sharingmusicatparties_bot""
+                                    ""first_name"": ""BOT"",
+                                    ""username"": ""BOT""
                                 }},
                                 ""chat"": {{
                                     ""id"": {2},
-                                    ""first_name"": ""Test"",
+                                    ""first_name"": {3},
                                     ""type"": ""private""
                                 }},
-                                ""date"": {3},
+                                ""date"": {4},
                                 ""text"": ""Welcome to the new sharingmusicatparties bot"",
                                 ""reply_markup"": {{
                                     ""inline_keyboard"": [
@@ -238,7 +238,7 @@ namespace TG_sender_emulator
                                 }}
                             }}
                         }}
-                    }}", messageId, messageText, userId, timestamp), Encoding.UTF8, "application/json");
+                    }}", messageId, messageText, user.Id, user.Name, timestamp), Encoding.UTF8, "application/json");
                         break;
                 }
 
@@ -390,7 +390,7 @@ namespace TG_sender_emulator
             lbl_ReqSts.Text = "ONGOING";
             lbl_ResStatusCode.Text = "(xxx)";
             int messageId = 0;
-            HttpResponseMessage res = await sendRequest(_selectedBotConfig, _selectedBotConfig.UrlWebhookEndpoint, _requestMode, ((Models.UserModel)cbo_Users.SelectedItem).Id, txt_MessageText.Text, txt_MessageId.Text.Length > 0 && int.TryParse(txt_MessageId.Text, out messageId) ? messageId : 0);
+            HttpResponseMessage res = await sendRequest(_selectedBotConfig, _selectedBotConfig.UrlWebhookEndpoint, _requestMode, cbo_Users.SelectedItem as Models.UserModel, txt_MessageText.Text, txt_MessageId.Text.Length > 0 && int.TryParse(txt_MessageId.Text, out messageId) ? messageId : 0);
             if (res != null)
             {
                 HttpStatusCode stsCode = res.StatusCode;
