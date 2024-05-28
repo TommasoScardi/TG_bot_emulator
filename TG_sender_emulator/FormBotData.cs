@@ -65,14 +65,15 @@ namespace TG_sender_emulator
 
                 if (SelectedConfig.ConfigName != txt_ConfigName.Text
                     || SelectedConfig.Url != txt_EndpointsURL.Text
+                    || SelectedConfig.UrlCronEndpoint != txt_CronEP.Text
                     || SelectedConfig.UrlWebhookEndpoint != txt_WebhookEP.Text
-                    || SelectedConfig.UrlCronEndpoint != txt_CronEP.Text)
+                    || SelectedConfig.UrlWebhookSet != txt_WebhookSetEP.Text)
                 {
                     SelectedConfig.ConfigName = txt_ConfigName.Text;
                     SelectedConfig.Url = txt_EndpointsURL.Text;
+                    SelectedConfig.UrlCronEndpoint = txt_CronEP.Text;
                     SelectedConfig.UrlWebhookEndpoint = txt_WebhookEP.Text;
                     SelectedConfig.UrlWebhookSet = txt_WebhookSetEP.Text;
-                    SelectedConfig.UrlCronEndpoint = txt_CronEP.Text;
 
                     int configIndex = _botsConfig.IndexOf(SelectedConfig);
                     _botsConfig[configIndex] = SelectedConfig;
