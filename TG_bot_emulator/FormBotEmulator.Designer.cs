@@ -1,6 +1,6 @@
 ﻿namespace TG_sender_emulator
 {
-    partial class FormEmulatorMessageSender
+    partial class FormBotEmulator
     {
         /// <summary>
         ///  Required designer variable.

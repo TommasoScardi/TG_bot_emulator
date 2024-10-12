@@ -15,7 +15,7 @@ using System.ComponentModel;
 
 namespace TG_sender_emulator
 {
-    public partial class FormEmulatorMessageSender : Form
+    public partial class FormBotEmulator : Form
     {
         BotConfigModel _selectedBotConfig;
         BindingList<BotConfigModel> _botsConfig;
@@ -23,7 +23,7 @@ namespace TG_sender_emulator
         List<InteractionModel> _tgInteractions;
         RequestModeModel _requestMode;
 
-        public FormEmulatorMessageSender()
+        public FormBotEmulator()
         {
             _botsConfig = new BindingList<BotConfigModel>();
             _users = new BindingList<Models.UserModel>();
@@ -275,7 +275,7 @@ namespace TG_sender_emulator
         {
             await loadDataFile();
 
-            FormBotData formBotData = new FormBotData(_botsConfig, _selectedBotConfig);
+            FormBotData formBotData = new FormBotData(ref _botsConfig, ref _selectedBotConfig);
             formBotData.ShowDialog();
             _selectedBotConfig = formBotData.SelectedConfig;
 
@@ -314,7 +314,7 @@ namespace TG_sender_emulator
 
         private void showConfigBoxToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            FormBotData formBotData = new FormBotData(_botsConfig, _selectedBotConfig);
+            FormBotData formBotData = new FormBotData(ref _botsConfig, ref _selectedBotConfig);
             formBotData.ShowDialog();
             _selectedBotConfig = formBotData.SelectedConfig;
 

@@ -37,7 +37,7 @@ namespace TG_sender_emulator
         {
             string bodyRes;
             lbl_ReqSts.Text = "ONGOING";
-            HttpResponseMessage res = await FormEmulatorMessageSender.sendRequest(_botConfig, _botConfig.UrlWebhookSet);
+            HttpResponseMessage res = await FormBotEmulator.sendRequest(_botConfig, _botConfig.UrlWebhookSet);
             bodyRes = (await res.Content.ReadAsStringAsync()).Trim();
             HttpStatusCode stsCode = res.StatusCode;
             lbl_ResStatusCode.Text = string.Format("({0})", (int)stsCode);
@@ -51,7 +51,7 @@ namespace TG_sender_emulator
             }
             else
             {
-                ((FormEmulatorMessageSender)_caller).rtxt_ResponseBody.Text = bodyRes;
+                ((FormBotEmulator)_caller).rtxt_ResponseBody.Text = bodyRes;
                 MessageBox.Show("errore richiedendo il token del webhook attivo, per più informazioni tornare alla pagina principale, il body della risposta è salvato sull'area dedicata");
             }
         }

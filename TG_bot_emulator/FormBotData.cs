@@ -17,7 +17,7 @@ namespace TG_sender_emulator
         BindingList<BotConfigModel> _botsConfig;
         public BotConfigModel SelectedConfig { get; set; }
 
-        public FormBotData(BindingList<BotConfigModel> botsConfig, BotConfigModel selectedConfig)
+        public FormBotData(ref BindingList<BotConfigModel> botsConfig, ref BotConfigModel selectedConfig)
         {
             _botsConfig = botsConfig;
             SelectedConfig = selectedConfig;
