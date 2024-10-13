@@ -112,7 +112,7 @@ namespace TG_bot_emulator
                 long timestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
 
                 CookieContainer cookies = new CookieContainer();
-                using (HttpClientHandler clientHandler = new HttpClientHandler() { CookieContainer = cookies})
+                using (HttpClientHandler clientHandler = new HttpClientHandler() { CookieContainer = cookies })
                 using (HttpClient client = new HttpClient(clientHandler))
                 {
                     client.BaseAddress = new Uri(config.Url + resourceUrl);
