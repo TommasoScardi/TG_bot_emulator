@@ -107,59 +107,121 @@ namespace TG_bot_emulator
 
         public static async Task<HttpResponseMessage> sendRequest(BotConfigModel config, string resourceUrl, RequestModeModel mode = RequestModeModel.NONE, Models.UserModel user = null, string messageText = "", long messageId = 0, bool debug = false)
         {
-            try
+            long timestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
+            CookieContainer cookies = new CookieContainer();
+            using (HttpClientHandler clientHandler = new HttpClientHandler() { CookieContainer = cookies })
+            using (HttpClient client = new HttpClient(clientHandler))
             {
-                long timestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
-
-                CookieContainer cookies = new CookieContainer();
-                using (HttpClientHandler clientHandler = new HttpClientHandler() { CookieContainer = cookies })
-                using (HttpClient client = new HttpClient(clientHandler))
+                client.BaseAddress = new Uri(config.Url + resourceUrl);
+                if (config.WebhookToken != null && config.WebhookToken.Length > 0)
                 {
-                    client.BaseAddress = new Uri(config.Url + resourceUrl);
-                    if (config.WebhookToken != null && config.WebhookToken.Length > 0)
-                    {
-                        client.DefaultRequestHeaders.Add("X-Telegram-Bot-Api-Secret-Token", config.WebhookToken);
-                    }
-                    if (debug)
-                    {
-                        cookies.Add(client.BaseAddress, new Cookie("XDEBUG_SESSION", "TG_bot_emulator"));
-                    }
-                    #region http request body
-                    HttpContent? body = null;
-                    switch (mode)
-                    {
-                        case RequestModeModel.PlainText:
-                            body = new StringContent(string.Format(@"{{
-                        ""update_id"": 0,
+                    client.DefaultRequestHeaders.Add("X-Telegram-Bot-Api-Secret-Token", config.WebhookToken);
+                }
+                if (debug)
+                {
+                    cookies.Add(client.BaseAddress, new Cookie("XDEBUG_SESSION", "TG_bot_emulator"));
+                }
+
+                #region http request body
+                HttpContent? body = null;
+                switch (mode)
+                {
+                    case RequestModeModel.PlainText:
+                        body = new StringContent(string.Format(@"{{
+                    ""update_id"": 0,
+                    ""message"": {{
+                        ""message_id"": {0},
+                        ""text"": ""{1}"",
+                        ""from"": {{
+                            ""id"": {2},
+                            ""is_bot"": false,
+                            ""first_name"": ""{3}"",
+                            ""language_code"": ""it""
+                        }},
+                        ""chat"": {{
+                            ""id"": {2},
+                            ""first_name"": ""{3}"",
+                            ""type"": ""private""
+                        }},
+                        ""date"": {4}
+                    }}
+                }}", messageId, messageText, user.Id, user.Name, timestamp), Encoding.UTF8, "application/json");
+                        break;
+                    case RequestModeModel.Cmd:
+                        body = new StringContent(string.Format(@"{{
+                    ""update_id"": 0,
+                    ""message"": {{
+                        ""message_id"": {0},
+                        ""text"": ""{1}"",
+                        ""from"": {{
+                            ""id"": {2},
+                            ""is_bot"": false,
+                            ""first_name"": ""{3}"",
+                            ""language_code"": ""it""
+                        }},
+                        ""chat"": {{
+                            ""id"": {2},
+                            ""first_name"": ""{3}"",
+                            ""type"": ""private""
+                        }},
+                        ""date"": {4},
+                        ""entities"": [
+                            {{
+                                ""offset"": 0,
+                                ""length"": {5},
+                                ""type"": ""bot_command""
+                            }}
+                        ]
+                    }}
+                }}", messageId, messageText, user.Id, user.Name, timestamp, messageText.Length), Encoding.UTF8, "application/json");
+                        break;
+                    case RequestModeModel.URL:
+                        body = new StringContent(string.Format(@"{{
+                    ""update_id"": 0,
+                    ""message"": {{
+                        ""message_id"": {0},
+                        ""text"": ""{1}"",
+                        ""from"": {{
+                            ""id"": {2},
+                            ""is_bot"": false,
+                            ""first_name"": {3},
+                            ""language_code"": ""it""
+                        }},
+                        ""chat"": {{
+                            ""id"": {2},
+                            ""first_name"": {3},
+                            ""type"": ""private""
+                        }},
+                        ""date"": {4},
+                        ""entities"": [
+                            {{
+                                ""offset"": 0,
+                                ""length"": {5},
+                                ""type"": ""url""
+                            }}
+                        ]
+                    }}
+                }}", messageId, messageText, user.Id, user.Name, timestamp, messageText.Length), Encoding.UTF8, "application/json");
+                        break;
+                    case RequestModeModel.Query:
+                        body = new StringContent(string.Format(@"{{
+                    ""update_id"": 0,
+                    ""callback_query"": {{
+                        ""id"": 0,
+                        ""from"": {{
+                            ""id"": {2},
+                            ""is_bot"": false,
+                            ""first_name"": ""{3}"",
+                            ""language_code"": ""it""
+                        }},
+                        ""data"": ""{1}"",
                         ""message"": {{
                             ""message_id"": {0},
-                            ""text"": ""{1}"",
                             ""from"": {{
-                                ""id"": {2},
-                                ""is_bot"": false,
-                                ""first_name"": ""{3}"",
-                                ""language_code"": ""it""
-                            }},
-                            ""chat"": {{
-                                ""id"": {2},
-                                ""first_name"": ""{3}"",
-                                ""type"": ""private""
-                            }},
-                            ""date"": {4}
-                        }}
-                    }}", messageId, messageText, user.Id, user.Name, timestamp), Encoding.UTF8, "application/json");
-                            break;
-                        case RequestModeModel.Cmd:
-                            body = new StringContent(string.Format(@"{{
-                        ""update_id"": 0,
-                        ""message"": {{
-                            ""message_id"": {0},
-                            ""text"": ""{1}"",
-                            ""from"": {{
-                                ""id"": {2},
-                                ""is_bot"": false,
-                                ""first_name"": ""{3}"",
-                                ""language_code"": ""it""
+                                ""id"": 0,
+                                ""is_bot"": true,
+                                ""first_name"": ""BOT"",
+                                ""username"": ""BOT""
                             }},
                             ""chat"": {{
                                 ""id"": {2},
@@ -167,119 +229,38 @@ namespace TG_bot_emulator
                                 ""type"": ""private""
                             }},
                             ""date"": {4},
-                            ""entities"": [
-                                {{
-                                    ""offset"": 0,
-                                    ""length"": {5},
-                                    ""type"": ""bot_command""
-                                }}
-                            ]
-                        }}
-                    }}", messageId, messageText, user.Id, user.Name, timestamp, messageText.Length), Encoding.UTF8, "application/json");
-                            break;
-                        case RequestModeModel.URL:
-                            body = new StringContent(string.Format(@"{{
-                        ""update_id"": 0,
-                        ""message"": {{
-                            ""message_id"": {0},
-                            ""text"": ""{1}"",
-                            ""from"": {{
-                                ""id"": {2},
-                                ""is_bot"": false,
-                                ""first_name"": {3},
-                                ""language_code"": ""it""
-                            }},
-                            ""chat"": {{
-                                ""id"": {2},
-                                ""first_name"": {3},
-                                ""type"": ""private""
-                            }},
-                            ""date"": {4},
-                            ""entities"": [
-                                {{
-                                    ""offset"": 0,
-                                    ""length"": {5},
-                                    ""type"": ""url""
-                                }}
-                            ]
-                        }}
-                    }}", messageId, messageText, user.Id, user.Name, timestamp, messageText.Length), Encoding.UTF8, "application/json");
-                            break;
-                        case RequestModeModel.Query:
-                            body = new StringContent(string.Format(@"{{
-                        ""update_id"": 0,
-                        ""callback_query"": {{
-                            ""id"": 0,
-                            ""from"": {{
-                                ""id"": {2},
-                                ""is_bot"": false,
-                                ""first_name"": ""{3}"",
-                                ""language_code"": ""it""
-                            }},
-                            ""data"": ""{1}"",
-                            ""message"": {{
-                                ""message_id"": {0},
-                                ""from"": {{
-                                    ""id"": 0,
-                                    ""is_bot"": true,
-                                    ""first_name"": ""BOT"",
-                                    ""username"": ""BOT""
-                                }},
-                                ""chat"": {{
-                                    ""id"": {2},
-                                    ""first_name"": ""{3}"",
-                                    ""type"": ""private""
-                                }},
-                                ""date"": {4},
-                                ""text"": ""Welcome to the new sharingmusicatparties bot"",
-                                ""reply_markup"": {{
-                                    ""inline_keyboard"": [
-                                        [
-                                            {{
-                                                ""text"": ""start a party room"",
-                                                ""callback_data"": ""createNewPartyRoom""
-                                            }},
-                                            {{
-                                                ""text"": ""join a party room"",
-                                                ""callback_data"": ""joinPartyRoom""
-                                            }}
-                                        ]
+                            ""text"": ""Welcome to the new sharingmusicatparties bot"",
+                            ""reply_markup"": {{
+                                ""inline_keyboard"": [
+                                    [
+                                        {{
+                                            ""text"": ""start a party room"",
+                                            ""callback_data"": ""createNewPartyRoom""
+                                        }},
+                                        {{
+                                            ""text"": ""join a party room"",
+                                            ""callback_data"": ""joinPartyRoom""
+                                        }}
                                     ]
-                                }}
+                                ]
                             }}
                         }}
-                    }}", messageId, messageText, user.Id, user.Name, timestamp), Encoding.UTF8, "application/json");
-                            break;
-                    }
-                    #endregion
-
-                    HttpResponseMessage response;
-                    if (body != null)
-                    {
-                        response = (await client.PostAsync(config.Url + resourceUrl, body));
-                    }
-                    else
-                    {
-                        response = (await client.GetAsync(config.Url + resourceUrl));
-                    }
-                    return response;
+                    }}
+                }}", messageId, messageText, user.Id, user.Name, timestamp), Encoding.UTF8, "application/json");
+                        break;
                 }
-            }
-            catch (WebException webEx)
-            {
-                MessageBox.Show("Web Exception:\n" + webEx.Message);
-                return null;
-            }
-            catch (TaskCanceledException tskEx)
-            {
-                MessageBox.Show("Request timeout");
-                return null;
-            }
-            catch (HttpRequestException httpExc)
-            {
+                #endregion
 
-                MessageBox.Show(httpExc.Message, "HTTP request error");
-                return null;
+                HttpResponseMessage response;
+                if (body != null)
+                {
+                    response = (await client.PostAsync(config.Url + resourceUrl, body));
+                }
+                else
+                {
+                    response = (await client.GetAsync(config.Url + resourceUrl));
+                }
+                return response;
             }
         }
 
@@ -414,9 +395,16 @@ namespace TG_bot_emulator
             lbl_ReqSts.Text = "ONGOING";
             lbl_ResStatusCode.Text = "(xxx)";
             int messageId = 0;
-            HttpResponseMessage res = await sendRequest(_selectedBotConfig, _selectedBotConfig.UrlWebhookEndpoint, _requestMode, cbo_Users.SelectedItem as Models.UserModel, txt_MessageText.Text, txt_MessageId.Text.Length > 0 && int.TryParse(txt_MessageId.Text, out messageId) ? messageId : 0, toggleXDebugToolStripMenuItem.Checked);
-            if (res != null)
+
+            try
             {
+                HttpResponseMessage res = await sendRequest(_selectedBotConfig
+                    ,_selectedBotConfig.UrlWebhookEndpoint
+                    ,_requestMode
+                    ,cbo_Users.SelectedItem as Models.UserModel
+                    ,txt_MessageText.Text
+                    ,txt_MessageId.Text.Length > 0 && int.TryParse(txt_MessageId.Text, out messageId) ? messageId : 0
+                    ,toggleXDebugToolStripMenuItem.Checked);
                 HttpStatusCode stsCode = res.StatusCode;
                 rtxt_ResponseBody.Text = (await res.Content.ReadAsStringAsync());
                 res.Dispose();
@@ -444,9 +432,18 @@ namespace TG_bot_emulator
                     }
                 }
             }
-            else
+            catch (WebException webEx)
             {
-                lbl_ReqSts.Text = "ERROR";
+                MessageBox.Show("Web Exception:\n" + webEx.Message);
+            }
+            catch (TaskCanceledException)
+            {
+                lbl_ReqSts.Text = "TIMEOUT";
+            }
+            catch (HttpRequestException httpExc)
+            {
+
+                MessageBox.Show(httpExc.Message, "HTTP request error");
             }
         }
 
@@ -500,16 +497,29 @@ namespace TG_bot_emulator
 
         private async void btn_CronRequest_Click(object sender, EventArgs e)
         {
-            lbl_ReqSts.Text = "ONGOING";
-            lbl_ResStatusCode.Text = "(xxx)";
-            HttpResponseMessage res = await sendRequest(_selectedBotConfig, _selectedBotConfig.UrlCronEndpoint, debug:toggleXDebugToolStripMenuItem.Checked);
-            if (res != null)
+            try
             {
+                lbl_ReqSts.Text = "ONGOING";
+                lbl_ResStatusCode.Text = "(xxx)";
+                HttpResponseMessage res = await sendRequest(_selectedBotConfig, _selectedBotConfig.UrlCronEndpoint, debug:toggleXDebugToolStripMenuItem.Checked);
                 HttpStatusCode stsCode = res.StatusCode;
                 rtxt_ResponseBody.Text = "CRON:\n" + (await res.Content.ReadAsStringAsync());
                 res.Dispose();
                 lbl_ReqSts.Text = "ENDED";
                 lbl_ResStatusCode.Text = string.Format("({0})", (int)stsCode);
+            }
+            catch (WebException webEx)
+            {
+                MessageBox.Show("Web Exception:\n" + webEx.Message);
+            }
+            catch (TaskCanceledException)
+            {
+                lbl_ReqSts.Text = "TIMEOUT";
+            }
+            catch (HttpRequestException httpExc)
+            {
+
+                MessageBox.Show(httpExc.Message, "HTTP request error");
             }
         }
 

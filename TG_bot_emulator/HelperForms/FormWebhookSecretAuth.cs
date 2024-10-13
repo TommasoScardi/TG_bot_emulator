@@ -39,9 +39,10 @@ namespace TG_bot_emulator.HelperForms
         {
             string bodyRes;
             lbl_ReqSts.Text = "ONGOING";
-            HttpResponseMessage res = await FormBotEmulator.sendRequest(_botConfig, _botConfig.UrlWebhookSet, debug: ((FormBotEmulator)_caller).toggleXDebugToolStripMenuItem.Checked);
-            if (res != null)
+            lbl_ResStatusCode.Text = "(xxx)";
+            try
             {
+                HttpResponseMessage res = await FormBotEmulator.sendRequest(_botConfig, _botConfig.UrlWebhookSet, debug: ((FormBotEmulator)_caller).toggleXDebugToolStripMenuItem.Checked);
                 bodyRes = (await res.Content.ReadAsStringAsync()).Trim();
                 HttpStatusCode stsCode = res.StatusCode;
                 lbl_ResStatusCode.Text = string.Format("({0})", (int)stsCode);
@@ -60,9 +61,18 @@ namespace TG_bot_emulator.HelperForms
                     MessageBox.Show("errore richiedendo il token del webhook attivo, per più informazioni tornare alla pagina principale, il body della risposta è salvato sull'area dedicata");
                 }
             }
-            else
+            catch (WebException webEx)
             {
-                lbl_ReqSts.Text = "ERRORE";
+                MessageBox.Show("Web Exception:\n" + webEx.Message);
+            }
+            catch (TaskCanceledException)
+            {
+                lbl_ReqSts.Text = "TIMEOUT";
+            }
+            catch (HttpRequestException httpExc)
+            {
+
+                MessageBox.Show(httpExc.Message, "HTTP request error");
             }
         }
     }
