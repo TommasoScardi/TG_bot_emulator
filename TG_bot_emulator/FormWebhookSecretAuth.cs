@@ -16,7 +16,7 @@ namespace TG_sender_emulator
     {
         Form _caller;
         BotConfigModel _botConfig;
-        public FormWebhookSecretAuth(Form caller, BotConfigModel botConfig)
+        public FormWebhookSecretAuth(Form caller, ref BotConfigModel botConfig)
         {
             _caller = caller;
             _botConfig = botConfig;

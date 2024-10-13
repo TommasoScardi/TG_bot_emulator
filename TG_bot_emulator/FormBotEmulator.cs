@@ -327,13 +327,13 @@ namespace TG_sender_emulator
 
         private void addUserToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            FormAddUser formAddUser = new FormAddUser(_users);
+            FormAddUser formAddUser = new FormAddUser(ref _users);
             formAddUser.ShowDialog();
         }
 
         private void authToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            FormWebhookSecretAuth formWebhookSecretAuth = new FormWebhookSecretAuth(this, _selectedBotConfig);
+            FormWebhookSecretAuth formWebhookSecretAuth = new FormWebhookSecretAuth(this, ref _selectedBotConfig);
             formWebhookSecretAuth.ShowDialog();
         }
 
@@ -384,6 +384,18 @@ namespace TG_sender_emulator
             if (txt_MessageText.Text.Length <= 0)
             {
                 MessageBox.Show("Message field empty");
+                return;
+            }
+
+            if (this._users.Count == 0)
+            {
+                MessageBox.Show("Nessun utente salvato utilizzabile per effettuare la richiesta");
+                return;
+            }
+
+            if (this.cbo_Users.SelectedIndex < 0)
+            {
+                MessageBox.Show("Nessun utente selezionato dal combo box, prima di effettuare la richiesta seleziona l'utente con cui la vuoi selezionare");
                 return;
             }
 

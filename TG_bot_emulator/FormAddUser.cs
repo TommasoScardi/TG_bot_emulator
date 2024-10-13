@@ -13,7 +13,7 @@ namespace TG_sender_emulator
     public partial class FormAddUser : Form
     {
         BindingList<Models.UserModel> _users;
-        public FormAddUser(BindingList<Models.UserModel> users)
+        public FormAddUser(ref BindingList<Models.UserModel> users)
         {
             _users = users;
             InitializeComponent();
