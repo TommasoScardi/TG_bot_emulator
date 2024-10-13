@@ -1,4 +1,4 @@
-﻿namespace TG_sender_emulator
+﻿namespace TG_bot_emulator
 {
     partial class FormBotEmulator
     {

@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace TG_sender_emulator
+namespace TG_bot_emulator
 {
     public partial class FormAddUser : Form
     {

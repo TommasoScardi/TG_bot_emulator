@@ -10,10 +10,10 @@ using System.Net;
 using Microsoft.VisualBasic;
 
 using Newtonsoft.Json;
-using TG_sender_emulator.Models;
+using TG_bot_emulator.Models;
 using System.ComponentModel;
 
-namespace TG_sender_emulator
+namespace TG_bot_emulator
 {
     public partial class FormBotEmulator : Form
     {
