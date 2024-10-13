@@ -105,22 +105,31 @@ namespace TG_bot_emulator
             }
         }
 
-        public static async Task<HttpResponseMessage> sendRequest(BotConfigModel config, string resourceUrl, RequestModeModel mode = RequestModeModel.NONE, Models.UserModel user = null, string messageText = "", long messageId = 0)
+        public static async Task<HttpResponseMessage> sendRequest(BotConfigModel config, string resourceUrl, RequestModeModel mode = RequestModeModel.NONE, Models.UserModel user = null, string messageText = "", long messageId = 0, bool debug = false)
         {
             try
             {
                 long timestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
-                HttpClient client = new HttpClient();
-                client.BaseAddress = new Uri(config.Url + resourceUrl);
-                if (config.WebhookToken != null && config.WebhookToken.Length > 0)
+
+                CookieContainer cookies = new CookieContainer();
+                using (HttpClientHandler clientHandler = new HttpClientHandler() { CookieContainer = cookies})
+                using (HttpClient client = new HttpClient(clientHandler))
                 {
-                    client.DefaultRequestHeaders.Add("X-Telegram-Bot-Api-Secret-Token", config.WebhookToken);
-                }
-                HttpContent? body = null;
-                switch (mode)
-                {
-                    case RequestModeModel.PlainText:
-                        body = new StringContent(string.Format(@"{{
+                    client.BaseAddress = new Uri(config.Url + resourceUrl);
+                    if (config.WebhookToken != null && config.WebhookToken.Length > 0)
+                    {
+                        client.DefaultRequestHeaders.Add("X-Telegram-Bot-Api-Secret-Token", config.WebhookToken);
+                    }
+                    if (debug)
+                    {
+                        cookies.Add(client.BaseAddress, new Cookie("XDEBUG_SESSION", "TG_bot_emulator"));
+                    }
+                    #region http request body
+                    HttpContent? body = null;
+                    switch (mode)
+                    {
+                        case RequestModeModel.PlainText:
+                            body = new StringContent(string.Format(@"{{
                         ""update_id"": 0,
                         ""message"": {{
                             ""message_id"": {0},
@@ -139,9 +148,9 @@ namespace TG_bot_emulator
                             ""date"": {4}
                         }}
                     }}", messageId, messageText, user.Id, user.Name, timestamp), Encoding.UTF8, "application/json");
-                        break;
-                    case RequestModeModel.Cmd:
-                        body = new StringContent(string.Format(@"{{
+                            break;
+                        case RequestModeModel.Cmd:
+                            body = new StringContent(string.Format(@"{{
                         ""update_id"": 0,
                         ""message"": {{
                             ""message_id"": {0},
@@ -167,9 +176,9 @@ namespace TG_bot_emulator
                             ]
                         }}
                     }}", messageId, messageText, user.Id, user.Name, timestamp, messageText.Length), Encoding.UTF8, "application/json");
-                        break;
-                    case RequestModeModel.URL:
-                        body = new StringContent(string.Format(@"{{
+                            break;
+                        case RequestModeModel.URL:
+                            body = new StringContent(string.Format(@"{{
                         ""update_id"": 0,
                         ""message"": {{
                             ""message_id"": {0},
@@ -195,9 +204,9 @@ namespace TG_bot_emulator
                             ]
                         }}
                     }}", messageId, messageText, user.Id, user.Name, timestamp, messageText.Length), Encoding.UTF8, "application/json");
-                        break;
-                    case RequestModeModel.Query:
-                        body = new StringContent(string.Format(@"{{
+                            break;
+                        case RequestModeModel.Query:
+                            body = new StringContent(string.Format(@"{{
                         ""update_id"": 0,
                         ""callback_query"": {{
                             ""id"": 0,
@@ -240,19 +249,21 @@ namespace TG_bot_emulator
                             }}
                         }}
                     }}", messageId, messageText, user.Id, user.Name, timestamp), Encoding.UTF8, "application/json");
-                        break;
-                }
+                            break;
+                    }
+                    #endregion
 
-                HttpResponseMessage response;
-                if (body != null)
-                {
-                    response = (await client.PostAsync(config.Url + resourceUrl, body));
+                    HttpResponseMessage response;
+                    if (body != null)
+                    {
+                        response = (await client.PostAsync(config.Url + resourceUrl, body));
+                    }
+                    else
+                    {
+                        response = (await client.GetAsync(config.Url + resourceUrl));
+                    }
+                    return response;
                 }
-                else
-                {
-                    response = (await client.GetAsync(config.Url + resourceUrl));
-                }
-                return response;
             }
             catch (WebException webEx)
             {
@@ -403,7 +414,7 @@ namespace TG_bot_emulator
             lbl_ReqSts.Text = "ONGOING";
             lbl_ResStatusCode.Text = "(xxx)";
             int messageId = 0;
-            HttpResponseMessage res = await sendRequest(_selectedBotConfig, _selectedBotConfig.UrlWebhookEndpoint, _requestMode, cbo_Users.SelectedItem as Models.UserModel, txt_MessageText.Text, txt_MessageId.Text.Length > 0 && int.TryParse(txt_MessageId.Text, out messageId) ? messageId : 0);
+            HttpResponseMessage res = await sendRequest(_selectedBotConfig, _selectedBotConfig.UrlWebhookEndpoint, _requestMode, cbo_Users.SelectedItem as Models.UserModel, txt_MessageText.Text, txt_MessageId.Text.Length > 0 && int.TryParse(txt_MessageId.Text, out messageId) ? messageId : 0, toggleXDebugToolStripMenuItem.Checked);
             if (res != null)
             {
                 HttpStatusCode stsCode = res.StatusCode;
@@ -487,7 +498,7 @@ namespace TG_bot_emulator
         {
             lbl_ReqSts.Text = "ONGOING";
             lbl_ResStatusCode.Text = "(xxx)";
-            HttpResponseMessage res = await sendRequest(_selectedBotConfig, _selectedBotConfig.UrlCronEndpoint);
+            HttpResponseMessage res = await sendRequest(_selectedBotConfig, _selectedBotConfig.UrlCronEndpoint, debug:toggleXDebugToolStripMenuItem.Checked);
             if (res != null)
             {
                 HttpStatusCode stsCode = res.StatusCode;

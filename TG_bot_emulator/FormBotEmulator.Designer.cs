@@ -68,7 +68,6 @@
             serverDebugToolStripMenuItem = new ToolStripMenuItem();
             xDebugToolStripMenuItem = new ToolStripMenuItem();
             toggleXDebugToolStripMenuItem = new ToolStripMenuItem();
-            toolStripSeparator1 = new ToolStripSeparator();
             tableLayoutPanel1.SuspendLayout();
             groupBox1.SuspendLayout();
             gbox_Response.SuspendLayout();
@@ -484,7 +483,7 @@
             // 
             // xDebugToolStripMenuItem
             // 
-            xDebugToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { toggleXDebugToolStripMenuItem, toolStripSeparator1 });
+            xDebugToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { toggleXDebugToolStripMenuItem });
             xDebugToolStripMenuItem.Name = "xDebugToolStripMenuItem";
             xDebugToolStripMenuItem.Size = new Size(180, 22);
             xDebugToolStripMenuItem.Text = "XDebug";
@@ -495,11 +494,6 @@
             toggleXDebugToolStripMenuItem.Size = new Size(180, 22);
             toggleXDebugToolStripMenuItem.Text = "toggle";
             toggleXDebugToolStripMenuItem.Click += toggleXDebugToolStripMenuItem_Click;
-            // 
-            // toolStripSeparator1
-            // 
-            toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new Size(177, 6);
             // 
             // FormBotEmulator
             // 
@@ -569,7 +563,6 @@
         private Label label1;
         private ToolStripMenuItem serverDebugToolStripMenuItem;
         private ToolStripMenuItem xDebugToolStripMenuItem;
-        private ToolStripMenuItem toggleXDebugToolStripMenuItem;
-        private ToolStripSeparator toolStripSeparator1;
+        public ToolStripMenuItem toggleXDebugToolStripMenuItem;
     }
 }

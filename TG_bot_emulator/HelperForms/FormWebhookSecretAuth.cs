@@ -37,7 +37,7 @@ namespace TG_bot_emulator.HelperForms
         {
             string bodyRes;
             lbl_ReqSts.Text = "ONGOING";
-            HttpResponseMessage res = await FormBotEmulator.sendRequest(_botConfig, _botConfig.UrlWebhookSet);
+            HttpResponseMessage res = await FormBotEmulator.sendRequest(_botConfig, _botConfig.UrlWebhookSet, debug: ((FormBotEmulator)_caller).toggleXDebugToolStripMenuItem.Checked);
             bodyRes = (await res.Content.ReadAsStringAsync()).Trim();
             HttpStatusCode stsCode = res.StatusCode;
             lbl_ResStatusCode.Text = string.Format("({0})", (int)stsCode);
