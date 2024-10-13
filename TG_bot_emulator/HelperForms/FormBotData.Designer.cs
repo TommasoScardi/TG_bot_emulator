@@ -1,4 +1,4 @@
-﻿namespace TG_bot_emulator
+﻿namespace TG_bot_emulator.HelperForms
 {
     partial class FormBotData
     {

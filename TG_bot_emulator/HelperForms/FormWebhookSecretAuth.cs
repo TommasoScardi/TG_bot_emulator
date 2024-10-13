@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using TG_bot_emulator.Models;
 
-namespace TG_bot_emulator
+namespace TG_bot_emulator.HelperForms
 {
     public partial class FormWebhookSecretAuth : Form
     {
