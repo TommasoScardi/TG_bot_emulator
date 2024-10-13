@@ -31,6 +31,8 @@ namespace TG_bot_emulator.HelperForms
         private void btnAuthTokenSubmit_Click(object sender, EventArgs e)
         {
             _botConfig.WebhookToken = txt_WebhookToken.Text;
+            MessageBox.Show("webhook set");
+            this.Close();
         }
 
         private async void btnRequestToken_Click(object sender, EventArgs e)
@@ -38,21 +40,29 @@ namespace TG_bot_emulator.HelperForms
             string bodyRes;
             lbl_ReqSts.Text = "ONGOING";
             HttpResponseMessage res = await FormBotEmulator.sendRequest(_botConfig, _botConfig.UrlWebhookSet, debug: ((FormBotEmulator)_caller).toggleXDebugToolStripMenuItem.Checked);
-            bodyRes = (await res.Content.ReadAsStringAsync()).Trim();
-            HttpStatusCode stsCode = res.StatusCode;
-            lbl_ResStatusCode.Text = string.Format("({0})", (int)stsCode);
-            res.Dispose();
-            lbl_ReqSts.Text = "ENDED";
-            if(stsCode == HttpStatusCode.OK)
+            if (res != null)
             {
-                _botConfig.WebhookToken = bodyRes;
-                txt_WebhookToken.Text = _botConfig.WebhookToken;
-                MessageBox.Show("webhook set");
+                bodyRes = (await res.Content.ReadAsStringAsync()).Trim();
+                HttpStatusCode stsCode = res.StatusCode;
+                lbl_ResStatusCode.Text = string.Format("({0})", (int)stsCode);
+                res.Dispose();
+                lbl_ReqSts.Text = "ENDED";
+                if (stsCode == HttpStatusCode.OK)
+                {
+                    _botConfig.WebhookToken = bodyRes;
+                    ((FormBotEmulator)_caller).rtxt_ResponseBody.Text = bodyRes;
+                    txt_WebhookToken.Text = bodyRes;
+                    MessageBox.Show("webhook set");
+                }
+                else
+                {
+                    ((FormBotEmulator)_caller).rtxt_ResponseBody.Text = bodyRes;
+                    MessageBox.Show("errore richiedendo il token del webhook attivo, per più informazioni tornare alla pagina principale, il body della risposta è salvato sull'area dedicata");
+                }
             }
             else
             {
-                ((FormBotEmulator)_caller).rtxt_ResponseBody.Text = bodyRes;
-                MessageBox.Show("errore richiedendo il token del webhook attivo, per più informazioni tornare alla pagina principale, il body della risposta è salvato sull'area dedicata");
+                lbl_ReqSts.Text = "ERRORE";
             }
         }
     }

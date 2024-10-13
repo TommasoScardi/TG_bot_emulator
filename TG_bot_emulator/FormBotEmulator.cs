@@ -444,6 +444,10 @@ namespace TG_bot_emulator
                     }
                 }
             }
+            else
+            {
+                lbl_ReqSts.Text = "ERROR";
+            }
         }
 
         private void txt_MessageText_KeyUp(object sender, KeyEventArgs e)
