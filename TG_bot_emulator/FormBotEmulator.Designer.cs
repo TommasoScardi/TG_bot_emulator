@@ -490,6 +490,8 @@
             // 
             // toggleXDebugToolStripMenuItem
             // 
+            toggleXDebugToolStripMenuItem.Checked = true;
+            toggleXDebugToolStripMenuItem.CheckState = CheckState.Checked;
             toggleXDebugToolStripMenuItem.Name = "toggleXDebugToolStripMenuItem";
             toggleXDebugToolStripMenuItem.Size = new Size(180, 22);
             toggleXDebugToolStripMenuItem.Text = "toggle";
