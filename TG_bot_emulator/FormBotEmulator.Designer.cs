@@ -65,6 +65,10 @@
             authToolStripMenuItem = new ToolStripMenuItem();
             usersToolStripMenuItem = new ToolStripMenuItem();
             addUserToolStripMenuItem = new ToolStripMenuItem();
+            serverDebugToolStripMenuItem = new ToolStripMenuItem();
+            xDebugToolStripMenuItem = new ToolStripMenuItem();
+            toggleXDebugToolStripMenuItem = new ToolStripMenuItem();
+            toolStripSeparator1 = new ToolStripSeparator();
             tableLayoutPanel1.SuspendLayout();
             groupBox1.SuspendLayout();
             gbox_Response.SuspendLayout();
@@ -429,7 +433,7 @@
             // 
             // menuStrip1
             // 
-            menuStrip1.Items.AddRange(new ToolStripItem[] { configToolStripMenuItem, usersToolStripMenuItem });
+            menuStrip1.Items.AddRange(new ToolStripItem[] { configToolStripMenuItem, usersToolStripMenuItem, serverDebugToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
             menuStrip1.Size = new Size(800, 24);
@@ -471,7 +475,33 @@
             addUserToolStripMenuItem.Text = "add user";
             addUserToolStripMenuItem.Click += addUserToolStripMenuItem_Click;
             // 
-            // FormEmulatorMessageSender
+            // serverDebugToolStripMenuItem
+            // 
+            serverDebugToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { xDebugToolStripMenuItem });
+            serverDebugToolStripMenuItem.Name = "serverDebugToolStripMenuItem";
+            serverDebugToolStripMenuItem.Size = new Size(87, 20);
+            serverDebugToolStripMenuItem.Text = "server debug";
+            // 
+            // xDebugToolStripMenuItem
+            // 
+            xDebugToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { toggleXDebugToolStripMenuItem, toolStripSeparator1 });
+            xDebugToolStripMenuItem.Name = "xDebugToolStripMenuItem";
+            xDebugToolStripMenuItem.Size = new Size(180, 22);
+            xDebugToolStripMenuItem.Text = "XDebug";
+            // 
+            // toggleXDebugToolStripMenuItem
+            // 
+            toggleXDebugToolStripMenuItem.Name = "toggleXDebugToolStripMenuItem";
+            toggleXDebugToolStripMenuItem.Size = new Size(180, 22);
+            toggleXDebugToolStripMenuItem.Text = "toggle";
+            toggleXDebugToolStripMenuItem.Click += toggleXDebugToolStripMenuItem_Click;
+            // 
+            // toolStripSeparator1
+            // 
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            toolStripSeparator1.Size = new Size(177, 6);
+            // 
+            // FormBotEmulator
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -479,7 +509,7 @@
             Controls.Add(tableLayoutPanel1);
             Controls.Add(menuStrip1);
             MainMenuStrip = menuStrip1;
-            Name = "FormEmulatorMessageSender";
+            Name = "FormBotEmulator";
             Text = "TG send message emulator";
             FormClosing += TG_APP_FormClosing;
             Load += TG_APP_Load;
@@ -537,5 +567,9 @@
         private Label lbl_ResStatusCode;
         private TextBox txt_MessageId;
         private Label label1;
+        private ToolStripMenuItem serverDebugToolStripMenuItem;
+        private ToolStripMenuItem xDebugToolStripMenuItem;
+        private ToolStripMenuItem toggleXDebugToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator1;
     }
 }

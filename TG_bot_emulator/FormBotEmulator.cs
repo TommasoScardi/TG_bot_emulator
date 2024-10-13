@@ -254,17 +254,17 @@ namespace TG_bot_emulator
                 }
                 return response;
             }
-            catch(WebException webEx)
+            catch (WebException webEx)
             {
                 MessageBox.Show("Web Exception:\n" + webEx.Message);
                 return null;
             }
-            catch(TaskCanceledException tskEx)
+            catch (TaskCanceledException tskEx)
             {
                 MessageBox.Show("Request timeout");
                 return null;
             }
-            catch(HttpRequestException httpExc)
+            catch (HttpRequestException httpExc)
             {
 
                 MessageBox.Show(httpExc.Message, "HTTP request error");
@@ -496,6 +496,11 @@ namespace TG_bot_emulator
                 lbl_ReqSts.Text = "ENDED";
                 lbl_ResStatusCode.Text = string.Format("({0})", (int)stsCode);
             }
+        }
+
+        private void toggleXDebugToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            toggleXDebugToolStripMenuItem.Checked = !toggleXDebugToolStripMenuItem.Checked;
         }
     }
 
