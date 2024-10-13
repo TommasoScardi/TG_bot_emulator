@@ -137,12 +137,12 @@ namespace TG_bot_emulator
                             ""from"": {{
                                 ""id"": {2},
                                 ""is_bot"": false,
-                                ""first_name"": {3},
+                                ""first_name"": ""{3}"",
                                 ""language_code"": ""it""
                             }},
                             ""chat"": {{
                                 ""id"": {2},
-                                ""first_name"": {3},
+                                ""first_name"": ""{3}"",
                                 ""type"": ""private""
                             }},
                             ""date"": {4}
@@ -158,12 +158,12 @@ namespace TG_bot_emulator
                             ""from"": {{
                                 ""id"": {2},
                                 ""is_bot"": false,
-                                ""first_name"": {3},
+                                ""first_name"": ""{3}"",
                                 ""language_code"": ""it""
                             }},
                             ""chat"": {{
                                 ""id"": {2},
-                                ""first_name"": {3},
+                                ""first_name"": ""{3}"",
                                 ""type"": ""private""
                             }},
                             ""date"": {4},
@@ -213,7 +213,7 @@ namespace TG_bot_emulator
                             ""from"": {{
                                 ""id"": {2},
                                 ""is_bot"": false,
-                                ""first_name"": {3},
+                                ""first_name"": ""{3}"",
                                 ""language_code"": ""it""
                             }},
                             ""data"": ""{1}"",
@@ -227,7 +227,7 @@ namespace TG_bot_emulator
                                 }},
                                 ""chat"": {{
                                     ""id"": {2},
-                                    ""first_name"": {3},
+                                    ""first_name"": ""{3}"",
                                     ""type"": ""private""
                                 }},
                                 ""date"": {4},
