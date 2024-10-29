@@ -39,6 +39,27 @@ namespace TG_bot_emulator.HelperForms
             cbo_BotsConfig.SelectedIndex = -1;
         }
 
+        private void cbo_BotsConfig_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cbo_BotsConfig.SelectedIndex >= 0)
+            {
+                BotConfigModel selectedConfig = cbo_BotsConfig.SelectedItem as BotConfigModel;
+                txt_ConfigName.Text = selectedConfig.ConfigName;
+                txt_EndpointsURL.Text = selectedConfig.Url;
+                txt_WebhookEP.Text = selectedConfig.UrlWebhookEndpoint;
+                txt_WebhookSetEP.Text = selectedConfig.UrlWebhookSet;
+                txt_CronEP.Text = selectedConfig.UrlCronEndpoint;
+            }
+            else
+            {
+                txt_ConfigName.Text = null;
+                txt_EndpointsURL.Text = null;
+                txt_WebhookEP.Text = null;
+                txt_WebhookSetEP.Text = null;
+                txt_CronEP.Text = null;
+            }
+        }
+
         private void btn_submit_Click(object sender, EventArgs e)
         {
             if (cbo_BotsConfig.SelectedIndex == -1)
@@ -80,27 +101,6 @@ namespace TG_bot_emulator.HelperForms
                 }
             }
             this.Close();
-        }
-
-        private void cbo_BotsConfig_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (cbo_BotsConfig.SelectedIndex >= 0)
-            {
-                SelectedConfig = cbo_BotsConfig.SelectedItem as BotConfigModel;
-                txt_ConfigName.Text = SelectedConfig.ConfigName;
-                txt_EndpointsURL.Text = SelectedConfig.Url;
-                txt_WebhookEP.Text = SelectedConfig.UrlWebhookEndpoint;
-                txt_WebhookSetEP.Text = SelectedConfig.UrlWebhookSet;
-                txt_CronEP.Text = SelectedConfig.UrlCronEndpoint;
-            }
-            else
-            {
-                txt_ConfigName.Text = null;
-                txt_EndpointsURL.Text = null;
-                txt_WebhookEP.Text = null;
-                txt_WebhookSetEP.Text = null;
-                txt_CronEP.Text = null;
-            }
         }
     }
 }
