@@ -278,6 +278,8 @@ namespace TG_bot_emulator
                 this.Close();
             }
 
+            selectedConfigLabel.Text = "config selected: " + _selectedBotConfig.ConfigName;
+
             foreach (InteractionModel interaction in _tgInteractions)
             {
                 switch (interaction.RequestMode)
@@ -316,6 +318,8 @@ namespace TG_bot_emulator
                 MessageBox.Show("nessuna configurazione caricata, chiusura programma");
                 this.Close();
             }
+
+            selectedConfigLabel.Text = "config selected: " + _selectedBotConfig.ConfigName;
         }
 
         private void addUserToolStripMenuItem_Click(object sender, EventArgs e)

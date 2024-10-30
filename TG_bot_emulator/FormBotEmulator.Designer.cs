@@ -70,6 +70,7 @@
             toggleXDebugToolStripMenuItem = new ToolStripMenuItem();
             toolStripContainer1 = new ToolStripContainer();
             statusStrip1 = new StatusStrip();
+            selectedConfigLabel = new ToolStripStatusLabel();
             tableLayoutPanel1.SuspendLayout();
             groupBox1.SuspendLayout();
             gbox_Response.SuspendLayout();
@@ -83,6 +84,7 @@
             toolStripContainer1.ContentPanel.SuspendLayout();
             toolStripContainer1.TopToolStripPanel.SuspendLayout();
             toolStripContainer1.SuspendLayout();
+            statusStrip1.SuspendLayout();
             SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -531,10 +533,17 @@
             // statusStrip1
             // 
             statusStrip1.Dock = DockStyle.None;
+            statusStrip1.Items.AddRange(new ToolStripItem[] { selectedConfigLabel });
             statusStrip1.Location = new Point(0, 0);
             statusStrip1.Name = "statusStrip1";
             statusStrip1.Size = new Size(800, 22);
             statusStrip1.TabIndex = 0;
+            // 
+            // selectedConfigLabel
+            // 
+            selectedConfigLabel.Name = "selectedConfigLabel";
+            selectedConfigLabel.Size = new Size(87, 17);
+            selectedConfigLabel.Text = "selected config";
             // 
             // FormBotEmulator
             // 
@@ -565,6 +574,8 @@
             toolStripContainer1.TopToolStripPanel.PerformLayout();
             toolStripContainer1.ResumeLayout(false);
             toolStripContainer1.PerformLayout();
+            statusStrip1.ResumeLayout(false);
+            statusStrip1.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -612,5 +623,6 @@
         public ToolStripMenuItem toggleXDebugToolStripMenuItem;
         private ToolStripContainer toolStripContainer1;
         private StatusStrip statusStrip1;
+        private ToolStripStatusLabel selectedConfigLabel;
     }
 }
