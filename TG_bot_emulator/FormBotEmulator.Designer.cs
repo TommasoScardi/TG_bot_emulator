@@ -68,6 +68,8 @@
             serverDebugToolStripMenuItem = new ToolStripMenuItem();
             xDebugToolStripMenuItem = new ToolStripMenuItem();
             toggleXDebugToolStripMenuItem = new ToolStripMenuItem();
+            toolStripContainer1 = new ToolStripContainer();
+            statusStrip1 = new StatusStrip();
             tableLayoutPanel1.SuspendLayout();
             groupBox1.SuspendLayout();
             gbox_Response.SuspendLayout();
@@ -77,6 +79,10 @@
             groupBox5.SuspendLayout();
             groupBox6.SuspendLayout();
             menuStrip1.SuspendLayout();
+            toolStripContainer1.BottomToolStripPanel.SuspendLayout();
+            toolStripContainer1.ContentPanel.SuspendLayout();
+            toolStripContainer1.TopToolStripPanel.SuspendLayout();
+            toolStripContainer1.SuspendLayout();
             SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -87,13 +93,13 @@
             tableLayoutPanel1.Controls.Add(gbox_Response, 0, 1);
             tableLayoutPanel1.Controls.Add(tableLayoutPanel2, 0, 0);
             tableLayoutPanel1.Dock = DockStyle.Fill;
-            tableLayoutPanel1.Location = new Point(0, 24);
+            tableLayoutPanel1.Location = new Point(0, 0);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 3;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 135F));
-            tableLayoutPanel1.Size = new Size(800, 461);
+            tableLayoutPanel1.Size = new Size(800, 439);
             tableLayoutPanel1.TabIndex = 0;
             // 
             // groupBox1
@@ -117,7 +123,7 @@
             groupBox1.Controls.Add(rbtn_MessageTypeURL);
             groupBox1.Controls.Add(rbtn_MessageTypeText);
             groupBox1.Dock = DockStyle.Fill;
-            groupBox1.Location = new Point(3, 329);
+            groupBox1.Location = new Point(3, 307);
             groupBox1.Name = "groupBox1";
             groupBox1.Size = new Size(794, 129);
             groupBox1.TabIndex = 0;
@@ -307,9 +313,9 @@
             // 
             gbox_Response.Controls.Add(rtxt_ResponseBody);
             gbox_Response.Dock = DockStyle.Fill;
-            gbox_Response.Location = new Point(3, 166);
+            gbox_Response.Location = new Point(3, 155);
             gbox_Response.Name = "gbox_Response";
-            gbox_Response.Size = new Size(794, 157);
+            gbox_Response.Size = new Size(794, 146);
             gbox_Response.TabIndex = 1;
             gbox_Response.TabStop = false;
             gbox_Response.Text = "Response Body";
@@ -319,7 +325,7 @@
             rtxt_ResponseBody.Dock = DockStyle.Fill;
             rtxt_ResponseBody.Location = new Point(3, 19);
             rtxt_ResponseBody.Name = "rtxt_ResponseBody";
-            rtxt_ResponseBody.Size = new Size(788, 135);
+            rtxt_ResponseBody.Size = new Size(788, 124);
             rtxt_ResponseBody.TabIndex = 0;
             rtxt_ResponseBody.Text = "";
             // 
@@ -339,7 +345,7 @@
             tableLayoutPanel2.Name = "tableLayoutPanel2";
             tableLayoutPanel2.RowCount = 1;
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel2.Size = new Size(794, 157);
+            tableLayoutPanel2.Size = new Size(794, 146);
             tableLayoutPanel2.TabIndex = 2;
             // 
             // groupBox3
@@ -348,7 +354,7 @@
             groupBox3.Dock = DockStyle.Fill;
             groupBox3.Location = new Point(3, 3);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(192, 151);
+            groupBox3.Size = new Size(192, 140);
             groupBox3.TabIndex = 0;
             groupBox3.TabStop = false;
             groupBox3.Text = "plain text";
@@ -360,7 +366,7 @@
             lbox_MessageText.ItemHeight = 15;
             lbox_MessageText.Location = new Point(3, 19);
             lbox_MessageText.Name = "lbox_MessageText";
-            lbox_MessageText.Size = new Size(186, 129);
+            lbox_MessageText.Size = new Size(186, 118);
             lbox_MessageText.TabIndex = 0;
             lbox_MessageText.MouseDoubleClick += lbox_MessageText_MouseDoubleClick;
             // 
@@ -370,7 +376,7 @@
             groupBox4.Dock = DockStyle.Fill;
             groupBox4.Location = new Point(201, 3);
             groupBox4.Name = "groupBox4";
-            groupBox4.Size = new Size(192, 151);
+            groupBox4.Size = new Size(192, 140);
             groupBox4.TabIndex = 1;
             groupBox4.TabStop = false;
             groupBox4.Text = "url";
@@ -382,7 +388,7 @@
             lbox_MessageUrl.ItemHeight = 15;
             lbox_MessageUrl.Location = new Point(3, 19);
             lbox_MessageUrl.Name = "lbox_MessageUrl";
-            lbox_MessageUrl.Size = new Size(186, 129);
+            lbox_MessageUrl.Size = new Size(186, 118);
             lbox_MessageUrl.TabIndex = 0;
             lbox_MessageUrl.MouseDoubleClick += lbox_MessageUrl_MouseDoubleClick;
             // 
@@ -392,7 +398,7 @@
             groupBox5.Dock = DockStyle.Fill;
             groupBox5.Location = new Point(399, 3);
             groupBox5.Name = "groupBox5";
-            groupBox5.Size = new Size(192, 151);
+            groupBox5.Size = new Size(192, 140);
             groupBox5.TabIndex = 2;
             groupBox5.TabStop = false;
             groupBox5.Text = "cmd";
@@ -404,7 +410,7 @@
             lbox_MessageCmd.ItemHeight = 15;
             lbox_MessageCmd.Location = new Point(3, 19);
             lbox_MessageCmd.Name = "lbox_MessageCmd";
-            lbox_MessageCmd.Size = new Size(186, 129);
+            lbox_MessageCmd.Size = new Size(186, 118);
             lbox_MessageCmd.TabIndex = 0;
             lbox_MessageCmd.MouseDoubleClick += lbox_MessageCmd_MouseDoubleClick;
             // 
@@ -414,7 +420,7 @@
             groupBox6.Dock = DockStyle.Fill;
             groupBox6.Location = new Point(597, 3);
             groupBox6.Name = "groupBox6";
-            groupBox6.Size = new Size(194, 151);
+            groupBox6.Size = new Size(194, 140);
             groupBox6.TabIndex = 3;
             groupBox6.TabStop = false;
             groupBox6.Text = "callback query";
@@ -426,12 +432,13 @@
             lbox_MessageQuery.ItemHeight = 15;
             lbox_MessageQuery.Location = new Point(3, 19);
             lbox_MessageQuery.Name = "lbox_MessageQuery";
-            lbox_MessageQuery.Size = new Size(188, 129);
+            lbox_MessageQuery.Size = new Size(188, 118);
             lbox_MessageQuery.TabIndex = 0;
             lbox_MessageQuery.MouseDoubleClick += lbox_MessageQuery_MouseDoubleClick;
             // 
             // menuStrip1
             // 
+            menuStrip1.Dock = DockStyle.None;
             menuStrip1.Items.AddRange(new ToolStripItem[] { configToolStripMenuItem, usersToolStripMenuItem, serverDebugToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
@@ -485,7 +492,7 @@
             // 
             xDebugToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { toggleXDebugToolStripMenuItem });
             xDebugToolStripMenuItem.Name = "xDebugToolStripMenuItem";
-            xDebugToolStripMenuItem.Size = new Size(180, 22);
+            xDebugToolStripMenuItem.Size = new Size(116, 22);
             xDebugToolStripMenuItem.Text = "XDebug";
             // 
             // toggleXDebugToolStripMenuItem
@@ -493,17 +500,48 @@
             toggleXDebugToolStripMenuItem.Checked = true;
             toggleXDebugToolStripMenuItem.CheckState = CheckState.Checked;
             toggleXDebugToolStripMenuItem.Name = "toggleXDebugToolStripMenuItem";
-            toggleXDebugToolStripMenuItem.Size = new Size(180, 22);
+            toggleXDebugToolStripMenuItem.Size = new Size(108, 22);
             toggleXDebugToolStripMenuItem.Text = "toggle";
             toggleXDebugToolStripMenuItem.Click += toggleXDebugToolStripMenuItem_Click;
+            // 
+            // toolStripContainer1
+            // 
+            // 
+            // toolStripContainer1.BottomToolStripPanel
+            // 
+            toolStripContainer1.BottomToolStripPanel.Controls.Add(statusStrip1);
+            // 
+            // toolStripContainer1.ContentPanel
+            // 
+            toolStripContainer1.ContentPanel.Controls.Add(tableLayoutPanel1);
+            toolStripContainer1.ContentPanel.Size = new Size(800, 439);
+            toolStripContainer1.Dock = DockStyle.Fill;
+            toolStripContainer1.LeftToolStripPanelVisible = false;
+            toolStripContainer1.Location = new Point(0, 0);
+            toolStripContainer1.Name = "toolStripContainer1";
+            toolStripContainer1.RightToolStripPanelVisible = false;
+            toolStripContainer1.Size = new Size(800, 485);
+            toolStripContainer1.TabIndex = 2;
+            toolStripContainer1.Text = "toolStripContainer1";
+            // 
+            // toolStripContainer1.TopToolStripPanel
+            // 
+            toolStripContainer1.TopToolStripPanel.Controls.Add(menuStrip1);
+            // 
+            // statusStrip1
+            // 
+            statusStrip1.Dock = DockStyle.None;
+            statusStrip1.Location = new Point(0, 0);
+            statusStrip1.Name = "statusStrip1";
+            statusStrip1.Size = new Size(800, 22);
+            statusStrip1.TabIndex = 0;
             // 
             // FormBotEmulator
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 485);
-            Controls.Add(tableLayoutPanel1);
-            Controls.Add(menuStrip1);
+            Controls.Add(toolStripContainer1);
             MainMenuStrip = menuStrip1;
             Name = "FormBotEmulator";
             Text = "TG send message emulator";
@@ -520,8 +558,14 @@
             groupBox6.ResumeLayout(false);
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
+            toolStripContainer1.BottomToolStripPanel.ResumeLayout(false);
+            toolStripContainer1.BottomToolStripPanel.PerformLayout();
+            toolStripContainer1.ContentPanel.ResumeLayout(false);
+            toolStripContainer1.TopToolStripPanel.ResumeLayout(false);
+            toolStripContainer1.TopToolStripPanel.PerformLayout();
+            toolStripContainer1.ResumeLayout(false);
+            toolStripContainer1.PerformLayout();
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
@@ -566,5 +610,7 @@
         private ToolStripMenuItem serverDebugToolStripMenuItem;
         private ToolStripMenuItem xDebugToolStripMenuItem;
         public ToolStripMenuItem toggleXDebugToolStripMenuItem;
+        private ToolStripContainer toolStripContainer1;
+        private StatusStrip statusStrip1;
     }
 }
