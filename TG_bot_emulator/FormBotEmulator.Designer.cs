@@ -69,6 +69,7 @@
             statusStrip1 = new StatusStrip();
             lbl_selectedConfig = new ToolStripStatusLabel();
             lbl_responseStatus = new ToolStripStatusLabel();
+            lbl_responseTime = new ToolStripStatusLabel();
             tableLayoutPanel1.SuspendLayout();
             groupBox1.SuspendLayout();
             gbox_Response.SuspendLayout();
@@ -501,7 +502,7 @@
             // statusStrip1
             // 
             statusStrip1.Dock = DockStyle.None;
-            statusStrip1.Items.AddRange(new ToolStripItem[] { lbl_selectedConfig, lbl_responseStatus });
+            statusStrip1.Items.AddRange(new ToolStripItem[] { lbl_selectedConfig, lbl_responseStatus, lbl_responseTime });
             statusStrip1.Location = new Point(0, 0);
             statusStrip1.Name = "statusStrip1";
             statusStrip1.Size = new Size(800, 22);
@@ -516,10 +517,16 @@
             // lbl_responseStatus
             // 
             lbl_responseStatus.Name = "lbl_responseStatus";
-            lbl_responseStatus.Size = new Size(667, 17);
+            lbl_responseStatus.Size = new Size(633, 17);
             lbl_responseStatus.Spring = true;
             lbl_responseStatus.Text = "response status: NO REQUEST (xxx)";
             lbl_responseStatus.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // lbl_responseTime
+            // 
+            lbl_responseTime.Name = "lbl_responseTime";
+            lbl_responseTime.Size = new Size(34, 17);
+            lbl_responseTime.Text = "time:";
             // 
             // FormBotEmulator
             // 
@@ -598,5 +605,6 @@
         private StatusStrip statusStrip1;
         private ToolStripStatusLabel lbl_selectedConfig;
         private ToolStripStatusLabel lbl_responseStatus;
+        private ToolStripStatusLabel lbl_responseTime;
     }
 }

@@ -11,6 +11,7 @@ using System.ComponentModel;
 using Newtonsoft.Json;
 using TG_bot_emulator.HelperForms;
 using TG_bot_emulator.Models;
+using System.Diagnostics;
 
 namespace TG_bot_emulator
 {
@@ -395,21 +396,25 @@ namespace TG_bot_emulator
             }
 
             lbl_responseStatus.Text = string.Format("response status: {0} ({1})", "ONGOING", "xxx");
+            lbl_responseTime.Text = "time:";
             int messageId = 0;
 
+            Stopwatch reqTimeElapsed = Stopwatch.StartNew();
             try
             {
                 HttpResponseMessage res = await sendRequest(_selectedBotConfig
-                    ,_selectedBotConfig.UrlWebhookEndpoint
-                    ,_requestMode
-                    ,cbo_Users.SelectedItem as Models.UserModel
-                    ,txt_MessageText.Text
-                    ,txt_MessageId.Text.Length > 0 && int.TryParse(txt_MessageId.Text, out messageId) ? messageId : 0
-                    ,toggleXDebugToolStripMenuItem.Checked);
+                    , _selectedBotConfig.UrlWebhookEndpoint
+                    , _requestMode
+                    , cbo_Users.SelectedItem as Models.UserModel
+                    , txt_MessageText.Text
+                    , txt_MessageId.Text.Length > 0 && int.TryParse(txt_MessageId.Text, out messageId) ? messageId : 0
+                    , toggleXDebugToolStripMenuItem.Checked);
                 HttpStatusCode stsCode = res.StatusCode;
                 HttpContentHeaders resHeaders = res.Content.Headers;
 
                 string httpResBody = (await res.Content.ReadAsStringAsync());
+                reqTimeElapsed.Stop();
+
                 if (resHeaders.ContentType.MediaType == "application/json")
                 {
                     rtxt_ResponseBody.Text = Newtonsoft.Json.Linq.JToken.Parse(httpResBody).ToString(Formatting.Indented);
@@ -422,6 +427,7 @@ namespace TG_bot_emulator
                 res.Dispose();
 
                 lbl_responseStatus.Text = string.Format("response status: {0} ({1})", "ENDED", (int)stsCode);
+                lbl_responseTime.Text = string.Format("time: {0} s", reqTimeElapsed.Elapsed.TotalSeconds);
 
                 if (stsCode == HttpStatusCode.OK && ch_SaveMessage.Checked)
                 {
@@ -457,6 +463,13 @@ namespace TG_bot_emulator
             {
 
                 MessageBox.Show(httpExc.Message, "HTTP request error");
+            }
+            finally
+            {
+                if (reqTimeElapsed.IsRunning)
+                {
+                    reqTimeElapsed.Stop();
+                }
             }
         }
 
