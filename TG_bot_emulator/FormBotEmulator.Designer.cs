@@ -30,13 +30,10 @@
         {
             tableLayoutPanel1 = new TableLayoutPanel();
             groupBox1 = new GroupBox();
-            lbl_ResStatusCode = new Label();
             txt_MessageId = new TextBox();
             label1 = new Label();
             cbo_Users = new ComboBox();
             ch_SaveMessage = new CheckBox();
-            lbl_ReqSts = new Label();
-            label4 = new Label();
             btn_CleanResponseBody = new Button();
             btn_CleanMessageText = new Button();
             btn_CronRequest = new Button();
@@ -70,7 +67,8 @@
             toggleXDebugToolStripMenuItem = new ToolStripMenuItem();
             toolStripContainer1 = new ToolStripContainer();
             statusStrip1 = new StatusStrip();
-            selectedConfigLabel = new ToolStripStatusLabel();
+            lbl_selectedConfig = new ToolStripStatusLabel();
+            lbl_responseStatus = new ToolStripStatusLabel();
             tableLayoutPanel1.SuspendLayout();
             groupBox1.SuspendLayout();
             gbox_Response.SuspendLayout();
@@ -106,13 +104,10 @@
             // 
             // groupBox1
             // 
-            groupBox1.Controls.Add(lbl_ResStatusCode);
             groupBox1.Controls.Add(txt_MessageId);
             groupBox1.Controls.Add(label1);
             groupBox1.Controls.Add(cbo_Users);
             groupBox1.Controls.Add(ch_SaveMessage);
-            groupBox1.Controls.Add(lbl_ReqSts);
-            groupBox1.Controls.Add(label4);
             groupBox1.Controls.Add(btn_CleanResponseBody);
             groupBox1.Controls.Add(btn_CleanMessageText);
             groupBox1.Controls.Add(btn_CronRequest);
@@ -131,15 +126,6 @@
             groupBox1.TabIndex = 0;
             groupBox1.TabStop = false;
             groupBox1.Text = "request";
-            // 
-            // lbl_ResStatusCode
-            // 
-            lbl_ResStatusCode.AutoSize = true;
-            lbl_ResStatusCode.Location = new Point(733, 24);
-            lbl_ResStatusCode.Name = "lbl_ResStatusCode";
-            lbl_ResStatusCode.Size = new Size(33, 15);
-            lbl_ResStatusCode.TabIndex = 9;
-            lbl_ResStatusCode.Text = "(200)";
             // 
             // txt_MessageId
             // 
@@ -176,24 +162,6 @@
             ch_SaveMessage.TabIndex = 5;
             ch_SaveMessage.Text = "save message";
             ch_SaveMessage.UseVisualStyleBackColor = true;
-            // 
-            // lbl_ReqSts
-            // 
-            lbl_ReqSts.AutoSize = true;
-            lbl_ReqSts.Location = new Point(683, 24);
-            lbl_ReqSts.Name = "lbl_ReqSts";
-            lbl_ReqSts.Size = new Size(44, 15);
-            lbl_ReqSts.TabIndex = 4;
-            lbl_ReqSts.Text = "ENDED";
-            // 
-            // label4
-            // 
-            label4.AutoSize = true;
-            label4.Location = new Point(597, 24);
-            label4.Name = "label4";
-            label4.Size = new Size(80, 15);
-            label4.TabIndex = 4;
-            label4.Text = "request status";
             // 
             // btn_CleanResponseBody
             // 
@@ -533,17 +501,25 @@
             // statusStrip1
             // 
             statusStrip1.Dock = DockStyle.None;
-            statusStrip1.Items.AddRange(new ToolStripItem[] { selectedConfigLabel });
+            statusStrip1.Items.AddRange(new ToolStripItem[] { lbl_selectedConfig, lbl_responseStatus });
             statusStrip1.Location = new Point(0, 0);
             statusStrip1.Name = "statusStrip1";
             statusStrip1.Size = new Size(800, 22);
             statusStrip1.TabIndex = 0;
             // 
-            // selectedConfigLabel
+            // lbl_selectedConfig
             // 
-            selectedConfigLabel.Name = "selectedConfigLabel";
-            selectedConfigLabel.Size = new Size(87, 17);
-            selectedConfigLabel.Text = "selected config";
+            lbl_selectedConfig.Name = "lbl_selectedConfig";
+            lbl_selectedConfig.Size = new Size(87, 17);
+            lbl_selectedConfig.Text = "selected config";
+            // 
+            // lbl_responseStatus
+            // 
+            lbl_responseStatus.Name = "lbl_responseStatus";
+            lbl_responseStatus.Size = new Size(667, 17);
+            lbl_responseStatus.Spring = true;
+            lbl_responseStatus.Text = "response status: NO REQUEST (xxx)";
+            lbl_responseStatus.TextAlign = ContentAlignment.MiddleRight;
             // 
             // FormBotEmulator
             // 
@@ -602,8 +578,6 @@
         private ListBox lbox_MessageCmd;
         private GroupBox groupBox6;
         private ListBox lbox_MessageQuery;
-        private Label lbl_ReqSts;
-        private Label label4;
         private CheckBox ch_SaveMessage;
         private Button btn_CleanResponseBody;
         private Button btn_CleanMessageText;
@@ -615,7 +589,6 @@
         private ToolStripMenuItem usersToolStripMenuItem;
         private ToolStripMenuItem addUserToolStripMenuItem;
         private ToolStripMenuItem authToolStripMenuItem;
-        private Label lbl_ResStatusCode;
         private TextBox txt_MessageId;
         private Label label1;
         private ToolStripMenuItem serverDebugToolStripMenuItem;
@@ -623,6 +596,7 @@
         public ToolStripMenuItem toggleXDebugToolStripMenuItem;
         private ToolStripContainer toolStripContainer1;
         private StatusStrip statusStrip1;
-        private ToolStripStatusLabel selectedConfigLabel;
+        private ToolStripStatusLabel lbl_selectedConfig;
+        private ToolStripStatusLabel lbl_responseStatus;
     }
 }

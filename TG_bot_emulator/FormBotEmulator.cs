@@ -5,9 +5,7 @@ using System.Reflection;
 using System.Resources;
 using System.Text;
 using System.IO;
-using Microsoft.VisualBasic.ApplicationServices;
 using System.Net;
-using Microsoft.VisualBasic;
 using System.ComponentModel;
 
 using Newtonsoft.Json;
@@ -278,7 +276,7 @@ namespace TG_bot_emulator
                 this.Close();
             }
 
-            selectedConfigLabel.Text = "config selected: " + _selectedBotConfig.ConfigName;
+            lbl_selectedConfig.Text = "config selected: " + _selectedBotConfig.ConfigName;
 
             foreach (InteractionModel interaction in _tgInteractions)
             {
@@ -319,7 +317,7 @@ namespace TG_bot_emulator
                 this.Close();
             }
 
-            selectedConfigLabel.Text = "config selected: " + _selectedBotConfig.ConfigName;
+            lbl_selectedConfig.Text = "config selected: " + _selectedBotConfig.ConfigName;
         }
 
         private void addUserToolStripMenuItem_Click(object sender, EventArgs e)
@@ -396,8 +394,7 @@ namespace TG_bot_emulator
                 return;
             }
 
-            lbl_ReqSts.Text = "ONGOING";
-            lbl_ResStatusCode.Text = "(xxx)";
+            lbl_responseStatus.Text = string.Format("response status: {0} ({1})", "ONGOING", "xxx");
             int messageId = 0;
 
             try
@@ -410,10 +407,22 @@ namespace TG_bot_emulator
                     ,txt_MessageId.Text.Length > 0 && int.TryParse(txt_MessageId.Text, out messageId) ? messageId : 0
                     ,toggleXDebugToolStripMenuItem.Checked);
                 HttpStatusCode stsCode = res.StatusCode;
-                rtxt_ResponseBody.Text = (await res.Content.ReadAsStringAsync());
+                HttpContentHeaders resHeaders = res.Content.Headers;
+
+                string httpResBody = (await res.Content.ReadAsStringAsync());
+                if (resHeaders.ContentType.MediaType == "application/json")
+                {
+                    rtxt_ResponseBody.Text = Newtonsoft.Json.Linq.JToken.Parse(httpResBody).ToString(Formatting.Indented);
+                }
+                else
+                {
+                    rtxt_ResponseBody.Text = httpResBody;
+                }
+
                 res.Dispose();
-                lbl_ReqSts.Text = "ENDED";
-                lbl_ResStatusCode.Text = string.Format("({0})", (int)stsCode);
+
+                lbl_responseStatus.Text = string.Format("response status: {0} ({1})", "ENDED", (int)stsCode);
+
                 if (stsCode == HttpStatusCode.OK && ch_SaveMessage.Checked)
                 {
                     ch_SaveMessage.Checked = false;
@@ -442,7 +451,7 @@ namespace TG_bot_emulator
             }
             catch (TaskCanceledException)
             {
-                lbl_ReqSts.Text = "TIMEOUT";
+                lbl_responseStatus.Text = string.Format("response status: {0} ({1})", "TIMEOUT", "?");
             }
             catch (HttpRequestException httpExc)
             {
@@ -453,7 +462,7 @@ namespace TG_bot_emulator
 
         private void txt_MessageText_KeyUp(object sender, KeyEventArgs e)
         {
-            if (txt_MessageText.Text.Length > 0 && e.KeyCode == Keys.Enter)
+            if (txt_MessageText.Text.Length > 0 && (e.KeyCode == Keys.Enter || e.KeyCode == Keys.F5))
             {
                 btn_Send_Click(null, null);
             }
@@ -465,6 +474,10 @@ namespace TG_bot_emulator
             ch_SaveMessage.Checked = false;
             txt_MessageText.Text = lbox_MessageText.Text;
             rbtn_MessageTypeText.Select();
+
+            lbox_MessageUrl.SelectedIndex = -1;
+            lbox_MessageCmd.SelectedIndex = -1;
+            lbox_MessageQuery.SelectedIndex = -1;
         }
 
         private void lbox_MessageUrl_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -472,6 +485,10 @@ namespace TG_bot_emulator
             ch_SaveMessage.Checked = false;
             txt_MessageText.Text = lbox_MessageUrl.Text;
             rbtn_MessageTypeURL.Select();
+
+            lbox_MessageText.SelectedIndex = -1;
+            lbox_MessageCmd.SelectedIndex = -1;
+            lbox_MessageQuery.SelectedIndex = -1;
         }
 
         private void lbox_MessageCmd_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -479,6 +496,10 @@ namespace TG_bot_emulator
             ch_SaveMessage.Checked = false;
             txt_MessageText.Text = lbox_MessageCmd.Text;
             rbtn_MessageTypeCMD.Select();
+
+            lbox_MessageText.SelectedIndex = -1;
+            lbox_MessageUrl.SelectedIndex = -1;
+            lbox_MessageQuery.SelectedIndex = -1;
         }
 
         private void lbox_MessageQuery_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -486,6 +507,10 @@ namespace TG_bot_emulator
             ch_SaveMessage.Checked = false;
             txt_MessageText.Text = lbox_MessageQuery.Text;
             rbtn_MessageTypeQuery.Select();
+
+            lbox_MessageText.SelectedIndex = -1;
+            lbox_MessageUrl.SelectedIndex = -1;
+            lbox_MessageCmd.SelectedIndex = -1;
         }
         #endregion
 
@@ -503,14 +528,12 @@ namespace TG_bot_emulator
         {
             try
             {
-                lbl_ReqSts.Text = "ONGOING";
-                lbl_ResStatusCode.Text = "(xxx)";
+                lbl_responseStatus.Text = string.Format("response status: {0} ({1})", "ONGOING", "xxx");
                 HttpResponseMessage res = await sendRequest(_selectedBotConfig, _selectedBotConfig.UrlCronEndpoint, debug:toggleXDebugToolStripMenuItem.Checked);
                 HttpStatusCode stsCode = res.StatusCode;
                 rtxt_ResponseBody.Text = "CRON:\n" + (await res.Content.ReadAsStringAsync());
                 res.Dispose();
-                lbl_ReqSts.Text = "ENDED";
-                lbl_ResStatusCode.Text = string.Format("({0})", (int)stsCode);
+                lbl_responseStatus.Text = string.Format("response status: {0} ({1})", "ENDED", (int)stsCode);
             }
             catch (WebException webEx)
             {
@@ -518,7 +541,7 @@ namespace TG_bot_emulator
             }
             catch (TaskCanceledException)
             {
-                lbl_ReqSts.Text = "TIMEOUT";
+                lbl_responseStatus.Text = string.Format("response status: {0} ({1})", "TIMEOUT", "?");
             }
             catch (HttpRequestException httpExc)
             {
